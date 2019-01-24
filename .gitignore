@@ -4,7 +4,7 @@
 *.class
 target/
 *.md
-*.xml
+*.iml
 
 # Log file
 *.log
