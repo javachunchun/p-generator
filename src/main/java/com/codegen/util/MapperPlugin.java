@@ -183,6 +183,14 @@ public class MapperPlugin extends PluginAdapter {
         findByLike.addElement(findByLikeInclude);
         parentElement.addElement(findByLike);
 
+        //添加findAll
+        XmlElement findAll = new XmlElement("select");
+        findAll.addAttribute(new Attribute("id", "findAll"));
+        findAll.addAttribute(new Attribute("resultMap", "BaseResultMap"));
+        findAll.addElement(new TextElement(" select * from "+ introspectedTable.getFullyQualifiedTableNameAtRuntime()));
+
+        parentElement.addElement(findAll);
+
         //添加isExist
         XmlElement isExistSelect = new XmlElement("select");
         isExistSelect.addAttribute(new Attribute("id", "isExist"));
@@ -287,6 +295,12 @@ public class MapperPlugin extends PluginAdapter {
                 String javaProperty = primaryKey.getJavaProperty();
 
                 /*
+                * findAll方法
+                * */
+                Method findAll = buildMethod(mapperInterface, baseModelJavaType, "findAll", null
+                        , baseModelJavaType, null);
+
+                /*
                 * deleteByPrimaryKey方法
                 * */
                 //设置方法参数
@@ -367,6 +381,7 @@ public class MapperPlugin extends PluginAdapter {
 
                 mapperInterface.addMethod(findByModel);
                 mapperInterface.addMethod(findByLike);
+                mapperInterface.addMethod(findAll);
                 mapperInterface.addMethod(deleteByPrimaryKey);
                 mapperInterface.addMethod(insert);
                 mapperInterface.addMethod(insertSelective);

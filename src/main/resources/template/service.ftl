@@ -16,4 +16,6 @@ public interface ${modelNameUpperCamel}Service extends BaseService<${modelNameUp
     int isExist(${modelNameUpperCamel} ${modelNameLowerCamel});
 
     PaginationVO<${modelNameUpperCamel}> findPage(BaseRequestVO requestVO);
+
+    ${modelNameUpperCamel} findAll();
 }

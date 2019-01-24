@@ -77,6 +77,11 @@ public class ${modelNameUpperCamel}ServiceImpl implements ${modelNameUpperCamel}
     }
 
     @Override
+    public ${modelNameUpperCamel} findAll() {
+        return ${modelNameLowerCamel}Mapper.findAll();
+    }
+
+    @Override
     public PaginationVO<${modelNameUpperCamel}> findPage(BaseRequestVO requestVO) {
         /*
         * 根据编码和名称模糊查询

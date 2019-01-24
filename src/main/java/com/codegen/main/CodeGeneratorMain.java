@@ -7,9 +7,9 @@ import com.codegen.service.CodeGeneratorManager;
  * Created by liuchunchun on 2018/10/20.
  */
 public class CodeGeneratorMain {
-	private static final String TABLE = "hcs_ci_prosofmod";
+	private static final String TABLE = "eee";
 	//是否进行批量删除文件，若是生成文件，请修改为true
-	private static final boolean toRemove = false;
+	private static final boolean toRemove = true;
 	private static final String MODEL_NAME = "ITest";
 	/*private static final String[] TABLES = {
 			"hcs_base_use","hcs_base_tet","hcs_base_soft","hcs_base_rouse","hcs_base_rofu","hcs_base_ro"
@@ -20,10 +20,10 @@ public class CodeGeneratorMain {
 	 * TODO 是否重构一下项目：合并代码只能合并至mapper以及model层面
 	 * TODO 若编写完controller层和service层且不想删除，请将reBuildController和reBuildServiceImpl设置为false
 	 **/
-	private static final boolean reBuildController = false;
-	private static final boolean reBuildService = false;
-	private static final boolean reBuildServiceImpl = false;
-	private static final boolean reBuildServiceMock = false;
+	private static final boolean reBuildController = true;
+	private static final boolean reBuildService = true;
+	private static final boolean reBuildServiceImpl = true;
+	private static final boolean reBuildServiceMock = true;
 	//不可更改！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
 	private static final boolean reBuildModelAndMapperAndMapperXML = true;
 	public static void main(String[] args) {

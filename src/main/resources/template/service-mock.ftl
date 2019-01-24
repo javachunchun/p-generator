@@ -52,6 +52,11 @@ public class ${modelNameUpperCamel}ServiceMock implements ${modelNameUpperCamel}
     }
 
     @Override
+    public ${modelNameUpperCamel} findAll() {
+        return null;
+    }
+
+    @Override
     public PaginationVO<${modelNameUpperCamel}> findPage(BaseRequestVO requestVO) {
         return null;
     }
