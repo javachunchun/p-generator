@@ -65,25 +65,11 @@ public class CodeGeneratorManager extends CodeGeneratorConfig {
         jdbcConnectionConfiguration.setPassword(JDBC_PASSWORD);
         jdbcConnectionConfiguration.setDriverClass(JDBC_DRIVER_CLASS_NAME);
         context.setJdbcConnectionConfiguration(jdbcConnectionConfiguration);
-        
-        /*SqlMapGeneratorConfiguration sqlMapGeneratorConfiguration = new SqlMapGeneratorConfiguration();
-        sqlMapGeneratorConfiguration.setTargetProject(RESOURCES_PATH);
-        *//*
-        * 刘春春修改：自定义mapper配置文件生成路径
-        * *//*
-        sqlMapGeneratorConfiguration.setTargetPackage("com.hoze.pf.pub.mapper");
-        context.setSqlMapGeneratorConfiguration(sqlMapGeneratorConfiguration);*/
+
 		JavaModelGeneratorConfiguration javaModelGeneratorConfiguration = new JavaModelGeneratorConfiguration();
 		javaModelGeneratorConfiguration.setTargetProject(PROJECT_PATH + JAVA_PATH + PACKAGE_PATH_MODEL);
 		javaModelGeneratorConfiguration.setTargetPackage(MODEL_PACKAGE + /*"." +*/ sign);
 		context.setJavaModelGeneratorConfiguration(javaModelGeneratorConfiguration);
-
-		// 创建 Service 接口
-		File modelFile = new File(PROJECT_PATH + JAVA_PATH + PACKAGE_PATH_MODEL+"/liuchunchun.txt");
-		// 查看父级目录是否存在, 不存在则创建
-		if (!modelFile.getParentFile().exists()) {
-			modelFile.getParentFile().mkdirs();
-		}
 
 		JavaClientGeneratorConfiguration javaClientGeneratorConfiguration = new JavaClientGeneratorConfiguration();
 		javaClientGeneratorConfiguration.setTargetProject(PROJECT_PATH + JAVA_PATH+ PACKAGE_PATH_MAPPER);
@@ -91,24 +77,10 @@ public class CodeGeneratorManager extends CodeGeneratorConfig {
 		javaClientGeneratorConfiguration.setConfigurationType("XMLMAPPER");
 		context.setJavaClientGeneratorConfiguration(javaClientGeneratorConfiguration);
 
-		// 创建 Service 接口
-		File mapperFile = new File(PROJECT_PATH + JAVA_PATH+ PACKAGE_PATH_MAPPER+"/liuchunchun.txt");
-		// 查看父级目录是否存在, 不存在则创建
-		if (!mapperFile.getParentFile().exists()) {
-			mapperFile.getParentFile().mkdirs();
-		}
-
 		SqlMapGeneratorConfiguration sqlMapGeneratorConfiguration = new SqlMapGeneratorConfiguration();
 		sqlMapGeneratorConfiguration.setTargetProject(PROJECT_PATH + JAVA_PATH+ RESOURCES_PATH);
 		sqlMapGeneratorConfiguration.setTargetPackage(MAPPER_PACKAGE + /*"." +*/ sign);
 		context.setSqlMapGeneratorConfiguration(sqlMapGeneratorConfiguration);
-
-		// 创建 Service 接口
-		File mapperXMLFile = new File(PROJECT_PATH + JAVA_PATH+ RESOURCES_PATH+"/liuchunchun.txt");
-		// 查看父级目录是否存在, 不存在则创建
-		if (!mapperXMLFile.getParentFile().exists()) {
-			mapperXMLFile.getParentFile().mkdirs();
-		}
 
 		// 增加 mapper 插件
 		/*
@@ -137,10 +109,13 @@ public class CodeGeneratorManager extends CodeGeneratorConfig {
 	 * 	genCode("gen_test_demo");  gen_test_demo ==> Demo
 	 * @param tableNames 表名, 可以多表
 	 */
-	public void genCodeWithSimpleName(boolean reBuildController, boolean reBuildService, boolean reBuildServiceImpl, boolean reBuildServiceMock
-			, boolean reBuildModelAndMapperAndMapperXML, String... tableNames) {
+	public void genCodeWithSimpleName(boolean reBuildController,
+									  boolean reBuildService,
+									  boolean reBuildServiceImpl,
+									  boolean reBuildServiceMock,
+									  String... tableNames) {
 		genCodeByTableName(reBuildController,reBuildService,reBuildServiceImpl,reBuildServiceMock
-				,reBuildModelAndMapperAndMapperXML,true, tableNames);
+				,true, tableNames);
 	}
 
 	/**
@@ -171,7 +146,7 @@ public class CodeGeneratorManager extends CodeGeneratorConfig {
 	public void genCodeWithDetailName(boolean reBuildController, boolean reBuildService, boolean reBuildServiceImpl, boolean reBuildServiceMock
 			, boolean reBuildModelAndMapperAndMapperXML,String ...tableNames) {
 		genCodeByTableName(reBuildController,reBuildService,reBuildServiceImpl,reBuildServiceMock
-				,reBuildModelAndMapperAndMapperXML,false, tableNames);
+				,false, tableNames);
 	}
 
 	/**
@@ -183,7 +158,7 @@ public class CodeGeneratorManager extends CodeGeneratorConfig {
 	public void genCodeWithCustomName(boolean reBuildController, boolean reBuildService, boolean reBuildServiceImpl, boolean reBuildServiceMock
 			, boolean reBuildModelAndMapperAndMapperXML,String tableName, String customModelName) {
 		genCodeByTableName(reBuildController,reBuildService,reBuildServiceImpl,reBuildServiceMock
-				,reBuildModelAndMapperAndMapperXML,tableName, customModelName, false);
+				,tableName, customModelName, false);
 	}
 
 	/**
@@ -281,11 +256,15 @@ public class CodeGeneratorManager extends CodeGeneratorConfig {
 	 * @param flag 标志
 	 * @param tableNames 表名数组
 	 */
-	private void genCodeByTableName(boolean reBuildController, boolean reBuildService, boolean reBuildServiceImpl, boolean reBuildServiceMock
-			, boolean reBuildModelAndMapperAndMapperXML,boolean flag, String ...tableNames) {
+	private void genCodeByTableName(boolean reBuildController,
+									boolean reBuildService,
+									boolean reBuildServiceImpl,
+									boolean reBuildServiceMock,
+									boolean flag,
+									String ...tableNames) {
 		for (String tableName : tableNames) {
 			genCodeByTableName(reBuildController,reBuildService,reBuildServiceImpl,reBuildServiceMock
-					,reBuildModelAndMapperAndMapperXML,tableName, null, flag);
+					,tableName, null, flag);
 		}
 	}
 
@@ -297,45 +276,21 @@ public class CodeGeneratorManager extends CodeGeneratorConfig {
 	 * @param modelName 实体类名
 	 * @param flag 标志
 	 */
-	private void genCodeByTableName(boolean reBuildController, boolean reBuildService, boolean reBuildServiceImpl, boolean reBuildServiceMock
-			, boolean reBuildModelAndMapperAndMapperXML,String tableName, String modelName, boolean flag) {
+	private void genCodeByTableName(boolean reBuildController,
+									boolean reBuildService,
+									boolean reBuildServiceImpl,
+									boolean reBuildServiceMock,
+									String tableName,
+									String modelName,
+									boolean flag) {
 		String sign = getSign(tableName);
-		String upperModelName = "";
 		if (flag) {
 			/*
 			* 刘春春修改：实体名即为表名驼峰格式
 			* */
 			modelName = tableNameConvertUpperCamel(tableName);
-			upperModelName = StringUtils.toUpperCaseFirstOne(modelName);
-//			modelName = getDefModelName(tableName);
 		}
-		/*if (reBuildModelAndMapperAndMapperXML) {
-			System.out.println("删除文件：" + PROJECT_PATH + PACKAGE_PATH_MODEL + MODEL_PACKAGE.replace(".", "/") + "/" + upperModelName + ".java");
-			delFile(PROJECT_PATH + PACKAGE_PATH_MODEL + MODEL_PACKAGE.replace(".", "/") + "/" + upperModelName + ".java");
-
-			*//*System.out.println("删除文件：" + PROJECT_PATH + PACKAGE_PATH_MAPPER + MAPPER_PACKAGE.replace(".", "/") + "/" + upperModelName + "Mapper.java");
-			delFile(PROJECT_PATH + PACKAGE_PATH_MAPPER + MAPPER_PACKAGE.replace(".", "/") + "/" + upperModelName + "Mapper.java");
-
-			System.out.println("删除文件：" + PROJECT_PATH + RESOURCES_PATH + "/" + MAPPER_PACKAGE.replace(".", "/") + "/" + upperModelName + "Mapper.xml");
-			delFile(PROJECT_PATH + RESOURCES_PATH + "/" + MAPPER_PACKAGE.replace(".", "/") + "/" + upperModelName + "Mapper.xml");*//*
-		}
-		if(reBuildService) {
-			System.out.println("删除文件：" + PROJECT_PATH + PACKAGE_PATH_SERVICE + upperModelName + "Service.java");
-			delFile(PROJECT_PATH + PACKAGE_PATH_SERVICE + upperModelName + "Service.java");
-		}
-		if(reBuildServiceImpl) {
-			System.out.println("删除文件：" + PROJECT_PATH + PACKAGE_PATH_SERVICE_IMPL + upperModelName + "ServiceImpl.java");
-			delFile(PROJECT_PATH + PACKAGE_PATH_SERVICE_IMPL + upperModelName + "ServiceImpl.java");
-		}
-		if(reBuildServiceMock) {
-			System.out.println("删除文件：" + PROJECT_PATH + PACKAGE_PATH_SERVICE + upperModelName + "ServiceMock.java");
-			delFile(PROJECT_PATH + PACKAGE_PATH_SERVICE + upperModelName + "ServiceMock.java");
-		}
-		if(reBuildController){
-			System.out.println("删除文件："+PROJECT_PATH+PACKAGE_PATH_CONTROLLER+upperModelName+"Controller.java");
-			delFile(PROJECT_PATH+PACKAGE_PATH_CONTROLLER+upperModelName+"Controller.java");
-		}*/
-		new ModelAndMapperGenerator().genCode(tableName, modelName, sign,reBuildModelAndMapperAndMapperXML);
+		new ModelAndMapperGenerator().genCode(tableName, modelName, sign);
 		new ServiceGenerator().genCode(tableName, modelName, sign,reBuildService,reBuildServiceImpl,reBuildServiceMock);
 		new ControllerGenerator().genCode(tableName, modelName, sign,reBuildController);
 	}

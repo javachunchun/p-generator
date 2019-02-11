@@ -14,7 +14,7 @@ public class MybatisGeneratorContext {
     public static MybatisGeneratorContext getInstance(){
     if(sl==null)
          sl=new MybatisGeneratorContext();
-     return sl;
+        return sl;
     }
 
     public IntrospectedTable getIntrospectedTable() {

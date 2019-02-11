@@ -19,10 +19,7 @@ import java.util.List;
  */
 public class ModelAndMapperGenerator extends CodeGeneratorManager implements CodeGenerator {
 
-	public void genCode(String tableName, String modelName, String sign,boolean reBuildModelAndMapperAndMapperXML) {
-		if (!reBuildModelAndMapperAndMapperXML) {
-			return;
-		}
+	public void genCode(String tableName, String modelName, String sign) {
 
 		Context initConfig = initConfig(tableName, modelName, sign);
 		List<String> warnings = null;
@@ -37,6 +34,7 @@ public class ModelAndMapperGenerator extends CodeGeneratorManager implements Cod
 			generator = new MyBatisGenerator(cfg, callback, warnings);
 			generator.generate(null);
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new RuntimeException("Model 和  Mapper 生成失败!", e);
 		}
 		
@@ -76,10 +74,5 @@ public class ModelAndMapperGenerator extends CodeGeneratorManager implements Cod
 			throw new RuntimeException("ModelAndMapperGenerator 初始化环境异常!", e);
 		}
 		return context;
-	}
-
-	@Override
-	public void genCode(String tableName, String modelName, String sign) {
-
 	}
 }

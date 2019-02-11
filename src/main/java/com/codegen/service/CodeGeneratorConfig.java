@@ -1,7 +1,5 @@
 package com.codegen.service;
 
-import com.codegen.main.CodeGeneratorMain;
-
 /**
  * 配置信息变量
  * Created by zhh on 2017/09/27.
@@ -15,7 +13,7 @@ public class CodeGeneratorConfig {
 	protected static String PROJECT_NAME;
 	
 	// 项目在硬盘上的基础路径
-	protected static final String PROJECT_PATH = System.getProperty("user.dir")+"/../"+ CodeGeneratorMain.PROJECT_NAME;
+	protected static final String PROJECT_PATH = System.getProperty("user.dir")+"/../"+ "p-generator";
 
 	// java文件路径
 	protected static String JAVA_PATH;
