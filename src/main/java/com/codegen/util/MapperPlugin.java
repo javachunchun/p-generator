@@ -19,7 +19,6 @@ import static org.mybatis.generator.internal.util.StringUtility.stringHasValue;
 /**   
  * @Title: MapperPlugin.java 
  * @Package org.mybatis.generator.plugins 
- * @Description: TODO
  * @author fendo
  * @date 2017年12月2日 下午5:35:14 
  * @version V1.0   
