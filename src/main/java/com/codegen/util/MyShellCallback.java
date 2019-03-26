@@ -84,10 +84,11 @@ public class MyShellCallback extends DefaultShellCallback {
             List<FieldDeclaration> fields = types.get(i).getFields();
             List<FieldDeclaration> oldFields = oldTypes.get(i).getFields();
             List<FieldDeclaration> newFields = new ArrayList<FieldDeclaration>();
-            HashSet<FieldDeclaration> fieldDeclarations = new HashSet<FieldDeclaration>();
-            fieldDeclarations.addAll(fields);
-            fieldDeclarations.addAll(oldFields);
-            newFields.addAll(fieldDeclarations);
+            List<FieldDeclaration> fieldsModifiable = new ArrayList<>(fields);
+            List<FieldDeclaration> oldFieldsModifiable = new ArrayList<>(oldFields);
+            fieldsModifiable.removeAll(oldFieldsModifiable);
+            newFields.addAll(oldFields);
+            newFields.addAll(fieldsModifiable);
             for (FieldDeclaration f : newFields) {
                 sb.append("\t" + f.toString());
                 newLine(sb);

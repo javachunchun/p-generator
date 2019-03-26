@@ -21,7 +21,6 @@ target/
 *.nar
 *.ear
 *.zip
-*.xml
 *.tar.gz
 *.rar
 

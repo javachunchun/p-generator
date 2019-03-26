@@ -12,7 +12,7 @@ import java.util.List;
 public class ${modelNameUpperCamel}ServiceMock implements ${modelNameUpperCamel}Service {
 
     @Override
-    public int deleteByPrimaryKey(${primaryKeyType} ${primaryKeyName}) {
+    public int deleteById(${primaryKeyType} ${primaryKeyName}) {
        return 0;
     }
 
@@ -27,17 +27,17 @@ public class ${modelNameUpperCamel}ServiceMock implements ${modelNameUpperCamel}
     }
 
     @Override
-    public ${modelNameUpperCamel} selectByPrimaryKey(${primaryKeyType} ${primaryKeyName}) {
+    public ${modelNameUpperCamel} getById(${primaryKeyType} ${primaryKeyName}) {
        return null;
     }
 
     @Override
-    public int updateByPrimaryKeySelective(${modelNameUpperCamel} ${modelNameLowerCamel}) {
+    public int updateByIdSelective(${modelNameUpperCamel} ${modelNameLowerCamel}) {
        return 0;
     }
 
     @Override
-    public int updateByPrimaryKey(${modelNameUpperCamel} ${modelNameLowerCamel}) {
+    public int updateById(${modelNameUpperCamel} ${modelNameLowerCamel}) {
        return 0;
     }
 
@@ -52,7 +52,7 @@ public class ${modelNameUpperCamel}ServiceMock implements ${modelNameUpperCamel}
     }
 
     @Override
-    public ${modelNameUpperCamel} findAll() {
+    public List<${modelNameUpperCamel}> findAll() {
         return null;
     }
 

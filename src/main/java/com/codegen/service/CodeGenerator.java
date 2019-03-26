@@ -1,7 +1,7 @@
 package com.codegen.service;
 /**
  * 主要逻辑接口
- * Created by zhh on 2017/09/20.
+ * Created by liuchunchun on 2019/02/14.
  */
 public interface CodeGenerator {
 	

@@ -17,7 +17,7 @@ import java.util.Map;
 
 /**
  * Service层 代码生成器
- * Created by zhh on 2017/09/20.
+ * Created by liuchunchun on 2019/02/14.
  */
 public class ServiceGenerator extends CodeGeneratorManager implements CodeGenerator {
 

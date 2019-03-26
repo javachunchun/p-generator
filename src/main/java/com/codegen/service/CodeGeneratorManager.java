@@ -20,7 +20,7 @@ import java.util.Properties;
 
 /**
  * 代码生成器基础项 (常量信息 & 通用方法)
- * Created by zhh on 2017/09/20.
+ * Created by liuchunchun on 2019/02/14.
  */
 public class CodeGeneratorManager extends CodeGeneratorConfig {
 	
@@ -124,16 +124,16 @@ public class CodeGeneratorManager extends CodeGeneratorConfig {
 	 * 	genCode("gen_test_demo");  gen_test_demo ==> Demo
 	 * @param tableNames 表名, 可以多表
 	 */
-	public void removeCodeWithSimpleName(boolean reBuildController, boolean reBuildService, boolean reBuildServiceImpl, boolean reBuildServiceMock
-			, boolean reBuildModelAndMapperAndMapperXML, String... tableNames) {
-		removeCodeByTableName(reBuildController,reBuildService,reBuildServiceImpl,reBuildServiceMock
-				,reBuildModelAndMapperAndMapperXML,true, tableNames);
+	public void removeCodeWithSimpleName(boolean reMoveController, boolean reMoveService, boolean reMoveServiceImpl, boolean reMoveServiceMock
+			, boolean reMoveModelAndMapperAndMapperXML, String... tableNames) {
+		removeCodeByTableName(reMoveController,reMoveService,reMoveServiceImpl,reMoveServiceMock
+				,reMoveModelAndMapperAndMapperXML,true, tableNames);
 	}
 
-	private void removeCodeByTableName(boolean reBuildController, boolean reBuildService, boolean reBuildServiceImpl, boolean reBuildServiceMock, boolean reBuildModelAndMapperAndMapperXML, boolean flag, String[] tableNames) {
+	private void removeCodeByTableName(boolean reMoveController, boolean reMoveService, boolean reMoveServiceImpl, boolean reMoveServiceMock, boolean reMoveModelAndMapperAndMapperXML, boolean flag, String[] tableNames) {
 		for (String tableName : tableNames) {
-			removeByTableName(reBuildController,reBuildService,reBuildServiceImpl,reBuildServiceMock
-					,reBuildModelAndMapperAndMapperXML,tableName, null, flag);
+			removeByTableName(reMoveController,reMoveService,reMoveServiceImpl,reMoveServiceMock
+					,reMoveModelAndMapperAndMapperXML,tableName, null, flag);
 		}
 	}
 
@@ -303,8 +303,8 @@ public class CodeGeneratorManager extends CodeGeneratorConfig {
 	 * @param modelName 实体类名
 	 * @param flag 标志
 	 */
-	private void removeByTableName(boolean reBuildController, boolean reBuildService, boolean reBuildServiceImpl, boolean reBuildServiceMock
-			, boolean reBuildModelAndMapperAndMapperXML,String tableName, String modelName, boolean flag) {
+	private void removeByTableName(boolean reMoveController, boolean reMoveService, boolean reMoveServiceImpl, boolean reMoveServiceMock
+			, boolean reMoveModelAndMapperAndMapperXML,String tableName, String modelName, boolean flag) {
 		String sign = getSign(tableName);
 		String upperModelName = "";
 		if (flag) {
@@ -315,7 +315,7 @@ public class CodeGeneratorManager extends CodeGeneratorConfig {
 			upperModelName = StringUtils.toUpperCaseFirstOne(modelName);
 //			modelName = getDefModelName(tableName);
 		}
-		if (reBuildModelAndMapperAndMapperXML) {
+		if (reMoveModelAndMapperAndMapperXML) {
 			System.out.println("删除文件：" + PROJECT_PATH + PACKAGE_PATH_MODEL + MODEL_PACKAGE.replace(".", "/") + "/" + upperModelName + ".java");
 			delFile(PROJECT_PATH + PACKAGE_PATH_MODEL + MODEL_PACKAGE.replace(".", "/") + "/" + upperModelName + ".java");
 
@@ -325,19 +325,19 @@ public class CodeGeneratorManager extends CodeGeneratorConfig {
 			System.out.println("删除文件：" + PROJECT_PATH + RESOURCES_PATH + "/" + MAPPER_PACKAGE.replace(".", "/") + "/" + upperModelName + "Mapper.xml");
 			delFile(PROJECT_PATH + RESOURCES_PATH + "/" + MAPPER_PACKAGE.replace(".", "/") + "/" + upperModelName + "Mapper.xml");
 		}
-		if(reBuildService) {
+		if(reMoveService) {
 			System.out.println("删除文件：" + PROJECT_PATH + PACKAGE_PATH_SERVICE + upperModelName + "Service.java");
 			delFile(PROJECT_PATH + PACKAGE_PATH_SERVICE + upperModelName + "Service.java");
 		}
-		if(reBuildServiceImpl) {
+		if(reMoveServiceImpl) {
 			System.out.println("删除文件：" + PROJECT_PATH + PACKAGE_PATH_SERVICE_IMPL + upperModelName + "ServiceImpl.java");
 			delFile(PROJECT_PATH + PACKAGE_PATH_SERVICE_IMPL + upperModelName + "ServiceImpl.java");
 		}
-		if(reBuildServiceMock) {
+		if(reMoveServiceMock) {
 			System.out.println("删除文件：" + PROJECT_PATH + PACKAGE_PATH_SERVICE + upperModelName + "ServiceMock.java");
 			delFile(PROJECT_PATH + PACKAGE_PATH_SERVICE + upperModelName + "ServiceMock.java");
 		}
-		if(reBuildController){
+		if(reMoveController){
 			System.out.println("删除文件："+PROJECT_PATH+PACKAGE_PATH_CONTROLLER+upperModelName+"Controller.java");
 			delFile(PROJECT_PATH+PACKAGE_PATH_CONTROLLER+upperModelName+"Controller.java");
 		}

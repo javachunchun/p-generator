@@ -67,7 +67,18 @@ public class SerializablePlugin extends PluginAdapter {
             field.setType(new FullyQualifiedJavaType("long"));
             field.setVisibility(JavaVisibility.PRIVATE);
             this.context.getCommentGenerator().addFieldComment(field, introspectedTable);
-            topLevelClass.addField(field);
+            List<Field> fields = topLevelClass.getFields();
+            fields.add(0,field);
+            Class<? extends TopLevelClass> clazz = topLevelClass.getClass();
+            Class<?> superclass = clazz.getSuperclass();
+            try {
+                java.lang.reflect.Field declaredField = superclass.getDeclaredField("fields");
+                declaredField.setAccessible(true);
+                declaredField.set(topLevelClass,fields);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
         }
 
     }

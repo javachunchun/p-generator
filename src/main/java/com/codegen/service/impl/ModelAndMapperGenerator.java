@@ -15,7 +15,7 @@ import java.util.List;
 
 /**
  * Model & Mapper 代码生成器
- * Created by zhh on 2017/09/20.
+ * Created by liuchunchun on 2019/02/14.
  */
 public class ModelAndMapperGenerator extends CodeGeneratorManager implements CodeGenerator {
 

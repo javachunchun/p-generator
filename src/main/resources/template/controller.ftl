@@ -28,7 +28,7 @@ import java.util.Map;
  */
 @RestController
 <#--@RequestMapping("${baseRequestMapping}")-->
-@RequestMapping("/pf/ci/${modelNameLowerCamel}/")
+@RequestMapping("/hoze/fms/${modelNameLowerCamel}/")
 @Api(description="开发中", tags="开发中")
 @ControllerAdapter
 public class ${modelNameUpperCamel}Controller {
@@ -69,7 +69,7 @@ public class ${modelNameUpperCamel}Controller {
         if(StringUtils.isEmpty(${primaryKeyName})){
             throw new CommonException("请选择要编辑的项");
         }
-        ${modelNameUpperCamel} ${modelNameLowerCamel} = ${modelNameLowerCamel}Service.selectByPrimaryKey(${primaryKeyName});
+        ${modelNameUpperCamel} ${modelNameLowerCamel} = ${modelNameLowerCamel}Service.getById(${primaryKeyName});
         return new CommonResult(CommonResultConstant.SUCCESS, ${modelNameLowerCamel});
     }
 
@@ -77,7 +77,7 @@ public class ${modelNameUpperCamel}Controller {
     @ApiImplicitParam(name = "${modelNameLowerCamel}", value = "实体", paramType = "body",required = false,  dataType = "${modelNameUpperCamel}")
     @RequestMapping(value = "update",method = RequestMethod.POST)
     public CommonResult update(@RequestBody ${modelNameUpperCamel} ${modelNameLowerCamel}, HttpServletRequest request) throws CommonException {
-        int num = ${modelNameLowerCamel}Service.updateByPrimaryKeySelective(${modelNameLowerCamel});
+        int num = ${modelNameLowerCamel}Service.updateByIdSelective(${modelNameLowerCamel});
         return new CommonResult(CommonResultConstant.SUCCESS, num);
     }
 
@@ -88,7 +88,7 @@ public class ${modelNameUpperCamel}Controller {
         if(StringUtils.isEmpty(${primaryKeyName})){
             throw new CommonException("请选择要删除的项");
         }
-        int num = ${modelNameLowerCamel}Service.deleteByPrimaryKey(${primaryKeyName});
+        int num = ${modelNameLowerCamel}Service.deleteById(${primaryKeyName});
         return new CommonResult(CommonResultConstant.SUCCESS, num);
     }
 

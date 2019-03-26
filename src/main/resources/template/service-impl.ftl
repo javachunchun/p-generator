@@ -31,27 +31,43 @@ public class ${modelNameUpperCamel}ServiceImpl implements ${modelNameUpperCamel}
     private ${modelNameUpperCamel}Mapper ${modelNameLowerCamel}Mapper;
 
     @Override
-    public int deleteByPrimaryKey(${primaryKeyType} ${primaryKeyName}) throws CommonException {
-        return ${modelNameLowerCamel}Mapper.deleteByPrimaryKey(${primaryKeyName});
-    }
-
-    @Override
     public int insert(${modelNameUpperCamel} ${modelNameLowerCamel}) throws CommonException {
-        String uuid32 = UUIDUtil.getUUID32();
-        ${modelNameLowerCamel}.set${primaryKeyNameUpperFirst}(uuid32);
+        if(StringUtil.isNull(${modelNameLowerCamel}.get${primaryKeyNameUpperFirst}())){
+            String uuid32 = UUIDUtil.getUUID32();
+            ${modelNameLowerCamel}.set${primaryKeyNameUpperFirst}(uuid32);
+        }
+
         return ${modelNameLowerCamel}Mapper.insert(${modelNameLowerCamel});
     }
 
     @Override
     public int insertSelective(${modelNameUpperCamel} ${modelNameLowerCamel}) throws CommonException {
-        String uuid32 = UUIDUtil.getUUID32();
-        ${modelNameLowerCamel}.set${primaryKeyNameUpperFirst}(uuid32);
+        if(StringUtil.isNull(${modelNameLowerCamel}.get${primaryKeyNameUpperFirst}())){
+            String uuid32 = UUIDUtil.getUUID32();
+            ${modelNameLowerCamel}.set${primaryKeyNameUpperFirst}(uuid32);
+        }
         this.check(${modelNameLowerCamel},false);
         return ${modelNameLowerCamel}Mapper.insertSelective(${modelNameLowerCamel});
     }
 
     @Override
-    public ${modelNameUpperCamel} selectByPrimaryKey(${primaryKeyType} ${primaryKeyName}) throws CommonException {
+    public int deleteById(${primaryKeyType} ${primaryKeyName}) throws CommonException {
+        return ${modelNameLowerCamel}Mapper.deleteByPrimaryKey(${primaryKeyName});
+    }
+
+    @Override
+    public int updateByIdSelective(${modelNameUpperCamel} ${modelNameLowerCamel}) throws CommonException {
+        this.check(${modelNameLowerCamel},true);
+        return ${modelNameLowerCamel}Mapper.updateByPrimaryKeySelective(${modelNameLowerCamel});
+    }
+
+    @Override
+    public int updateById(${modelNameUpperCamel} ${modelNameLowerCamel}) throws CommonException {
+        return ${modelNameLowerCamel}Mapper.updateByPrimaryKey(${modelNameLowerCamel});
+    }
+
+    @Override
+    public ${modelNameUpperCamel} getById(${primaryKeyType} ${primaryKeyName}) throws CommonException {
         return ${modelNameLowerCamel}Mapper.selectByPrimaryKey(${primaryKeyName});
     }
 
@@ -61,23 +77,12 @@ public class ${modelNameUpperCamel}ServiceImpl implements ${modelNameUpperCamel}
     }
 
     @Override
-    public int updateByPrimaryKeySelective(${modelNameUpperCamel} ${modelNameLowerCamel}) throws CommonException {
-        this.check(${modelNameLowerCamel},true);
-        return ${modelNameLowerCamel}Mapper.updateByPrimaryKeySelective(${modelNameLowerCamel});
-    }
-
-    @Override
-    public int updateByPrimaryKey(${modelNameUpperCamel} ${modelNameLowerCamel}) throws CommonException {
-        return ${modelNameLowerCamel}Mapper.updateByPrimaryKey(${modelNameLowerCamel});
-    }
-
-    @Override
     public int isExist(${modelNameUpperCamel} ${modelNameLowerCamel}) {
         return ${modelNameLowerCamel}Mapper.isExist(${modelNameLowerCamel});
     }
 
     @Override
-    public ${modelNameUpperCamel} findAll() {
+    public List<${modelNameUpperCamel}> findAll() {
         return ${modelNameLowerCamel}Mapper.findAll();
     }
 

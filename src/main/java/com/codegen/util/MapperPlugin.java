@@ -149,7 +149,7 @@ public class MapperPlugin extends PluginAdapter {
         select.addAttribute(new Attribute("id", "findByModel"));
         select.addAttribute(new Attribute("resultMap", "BaseResultMap"));
         select.addAttribute(new Attribute("parameterType", introspectedTable.getBaseRecordType()));
-        select.addElement(new TextElement(" select * from "+ introspectedTable.getFullyQualifiedTableNameAtRuntime()));
+        select.addElement(new TextElement(" select <include refid=\"Base_Column_List\" /> from "+ introspectedTable.getFullyQualifiedTableNameAtRuntime()));
 
         XmlElement include = new XmlElement("include");
         include.addAttribute(new Attribute("refid", "sql_where"));
@@ -186,16 +186,22 @@ public class MapperPlugin extends PluginAdapter {
         XmlElement findAll = new XmlElement("select");
         findAll.addAttribute(new Attribute("id", "findAll"));
         findAll.addAttribute(new Attribute("resultMap", "BaseResultMap"));
-        findAll.addElement(new TextElement(" select * from "+ introspectedTable.getFullyQualifiedTableNameAtRuntime()));
+        findAll.addElement(new TextElement(" select <include refid=\"Base_Column_List\" /> from "+ introspectedTable.getFullyQualifiedTableNameAtRuntime()));
 
         parentElement.addElement(findAll);
 
+        String countWhat = "*";
+        List<IntrospectedColumn> primaryKeyColumns = introspectedTable.getPrimaryKeyColumns();
+        if (primaryKeyColumns != null && primaryKeyColumns.size() >= 0) {
+            IntrospectedColumn introspectedColumn = primaryKeyColumns.get(0);
+            countWhat = introspectedColumn.getJavaProperty();
+        }
         //添加isExist
         XmlElement isExistSelect = new XmlElement("select");
         isExistSelect.addAttribute(new Attribute("id", "isExist"));
         isExistSelect.addAttribute(new Attribute("resultType", "java.lang.Integer"));
         isExistSelect.addAttribute(new Attribute("parameterType", introspectedTable.getBaseRecordType()));
-        isExistSelect.addElement(new TextElement(" select count(*) from "+ introspectedTable.getFullyQualifiedTableNameAtRuntime()));
+        isExistSelect.addElement(new TextElement(" select count("+countWhat+") from "+ introspectedTable.getFullyQualifiedTableNameAtRuntime()));
         isExistSelect.addElement(include);
         parentElement.addElement(isExistSelect);
 
@@ -289,6 +295,10 @@ public class MapperPlugin extends PluginAdapter {
                 * */
                 Method findByLike = buildMethod(mapperInterface, baseModelJavaType, "findByLike", findByModelParam, findByModelReturnType, null);
 
+                List<IntrospectedColumn> primaryKeyColumns = introspectedTable.getPrimaryKeyColumns();
+                if (primaryKeyColumns == null || primaryKeyColumns.size() <= 0) {
+                    throw new RuntimeException("主键未定义");
+                }
                 IntrospectedColumn primaryKey = introspectedTable.getPrimaryKeyColumns().get(0);
                 FullyQualifiedJavaType primaryType = primaryKey.getFullyQualifiedJavaType();
                 String javaProperty = primaryKey.getJavaProperty();
@@ -297,7 +307,7 @@ public class MapperPlugin extends PluginAdapter {
                 * findAll方法
                 * */
                 Method findAll = buildMethod(mapperInterface, baseModelJavaType, "findAll", null
-                        , baseModelJavaType, null);
+                        , findByModelReturnType, null);
 
                 /*
                 * deleteByPrimaryKey方法
@@ -339,7 +349,7 @@ public class MapperPlugin extends PluginAdapter {
                 Method insertSelective = buildMethod(mapperInterface, baseModelJavaType, "insertSelective", insertSelectiveParam, insertSelectiveReturnType, null);
 
                 /*
-                * selectByPrimaryKey方法
+                * getByPrimaryKey方法
                 * */
                 //设置方法参数
                 Parameter selectByPrimaryKeyParam = new Parameter(/*参数类型*/primaryType,/*形参*/javaProperty);

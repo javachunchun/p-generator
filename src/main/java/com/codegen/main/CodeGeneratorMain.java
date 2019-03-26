@@ -15,6 +15,7 @@ public class CodeGeneratorMain {
 
 	public static void main(String[] args) {
 		CodeGeneratorManager cgm = new CodeGeneratorManager();
+
 		//生成代码入口
 		cgm.genCodeWithSimpleName(reBuildController, reBuildService, reBuildServiceImpl, reBuildServiceMock
 				, TABLE);

@@ -2,7 +2,7 @@ package com.codegen.service;
 
 /**
  * 配置信息变量
- * Created by zhh on 2017/09/27.
+ * Created by liuchunchun on 2019/02/14.
  */
 public class CodeGeneratorConfig {
 	// JDBC 相关配置信息
@@ -13,7 +13,9 @@ public class CodeGeneratorConfig {
 	protected static String PROJECT_NAME;
 	
 	// 项目在硬盘上的基础路径
-	protected static final String PROJECT_PATH = System.getProperty("user.dir")+"/../"+ "p-generator";
+	//	protected static final String PROJECT_PATH = System.getProperty("user.dir")+"/../"+ "p-generator-new";
+
+	protected static final String PROJECT_PATH = CodeGeneratorConfig.class.getResource("/").getPath().substring(1).replace("/target/classes/", "");
 
 	// java文件路径
 	protected static String JAVA_PATH;
