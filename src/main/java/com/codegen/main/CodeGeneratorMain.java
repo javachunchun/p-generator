@@ -8,7 +8,7 @@ import com.codegen.service.CodeGeneratorManager;
  */
 public class CodeGeneratorMain {
 	private static final String TABLE = "t_service_effect";
-	private static final String ALIAS = "Liuchunchun";
+	public static final String ALIAS = "Liuchunchun";
 	private static final boolean reBuildController = true;
 	private static final boolean reBuildService = true;
 	private static final boolean reBuildServiceImpl = false;

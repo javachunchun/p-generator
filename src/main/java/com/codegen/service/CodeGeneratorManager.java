@@ -1,5 +1,6 @@
 package com.codegen.service;
 
+import com.codegen.main.CodeGeneratorMain;
 import com.codegen.service.impl.ControllerGenerator;
 import com.codegen.service.impl.ModelAndMapperGenerator;
 import com.codegen.service.impl.ServiceGenerator;
@@ -445,13 +446,13 @@ public class CodeGeneratorManager extends CodeGeneratorConfig {
 		BASE_PACKAGE = prop.getProperty("base.package");
 		PROJECT_NAME = prop.getProperty("project.name");
 		PACKAGE_PATH = prop.getProperty("package.path");
-		MODEL_PACKAGE = BASE_PACKAGE + "." + prop.getProperty("model.package.tail");
-		MAPPER_PACKAGE = BASE_PACKAGE + "." + prop.getProperty("mapper.package.tail");
-		XML_MAPPER_PACKAGE = BASE_PACKAGE + "." + prop.getProperty("xml.mapper.package.tail");
-		BASE_MAPPER_PACKAGE = BASE_PACKAGE + "." + prop.getProperty("base.mapper.package.tail");
-		SERVICE_PACKAGE = BASE_PACKAGE + "." + prop.getProperty("service.package.tail");
-		SERVICE_IMPL_PACKAGE = BASE_PACKAGE + "." + prop.getProperty("service.impl.package.tail");
-		CONTROLLER_PACKAGE = BASE_PACKAGE + "." + prop.getProperty("controller.package.tail");
+		MODEL_PACKAGE = BASE_PACKAGE + "." + CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, CodeGeneratorMain.ALIAS) + "." + prop.getProperty("model.package.tail");
+		MAPPER_PACKAGE = BASE_PACKAGE + "."+ CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, CodeGeneratorMain.ALIAS) + "." + prop.getProperty("mapper.package.tail");
+		XML_MAPPER_PACKAGE = BASE_PACKAGE + "."+ CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, CodeGeneratorMain.ALIAS) + "." + prop.getProperty("xml.mapper.package.tail");
+		BASE_MAPPER_PACKAGE = BASE_PACKAGE + "."+ CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, CodeGeneratorMain.ALIAS) + "." + prop.getProperty("base.mapper.package.tail");
+		SERVICE_PACKAGE = BASE_PACKAGE + "."+ CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, CodeGeneratorMain.ALIAS) + "." + prop.getProperty("service.package.tail");
+		SERVICE_IMPL_PACKAGE = BASE_PACKAGE + "."+ CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, CodeGeneratorMain.ALIAS) + "." + prop.getProperty("service.impl.package.tail");
+		CONTROLLER_PACKAGE = BASE_PACKAGE + "."+ CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, CodeGeneratorMain.ALIAS) + "." + prop.getProperty("controller.package.tail");
 
 		MAPPER_INTERFACE_REFERENCE = prop.getProperty("mapper.interface.reference");
 		SERVICE_INTERFACE_REFERENCE = prop.getProperty("service.interface.reference");
