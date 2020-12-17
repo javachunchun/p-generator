@@ -3,7 +3,9 @@ package com.codegen.service.impl;
 import com.codegen.service.CodeGenerator;
 import com.codegen.service.CodeGeneratorManager;
 import com.codegen.util.MyShellCallback;
+import com.codegen.util.MybatisGeneratorContext;
 import com.codegen.util.StringUtils;
+import org.mybatis.generator.api.IntrospectedTable;
 import org.mybatis.generator.api.MyBatisGenerator;
 import org.mybatis.generator.config.Configuration;
 import org.mybatis.generator.config.Context;
@@ -47,8 +49,8 @@ public class ModelAndMapperGenerator extends CodeGeneratorManager implements Cod
 		}
 		
 		logger.info(modelName, "{}.java 生成成功!");
-		logger.info(modelName, "{}Mapper.java 生成成功!");
-		logger.info(modelName, "{}Mapper.xml 生成成功!");
+		logger.info(modelName, "{}Dao.java 生成成功!");
+		logger.info(modelName, "{}Dao.xml 生成成功!");
 	}
 	
 	/**
@@ -62,10 +64,10 @@ public class ModelAndMapperGenerator extends CodeGeneratorManager implements Cod
 		try {
 			context = initMybatisGeneratorContext(sign);
 			TableConfiguration tableConfiguration = new TableConfiguration(context);
-			tableConfiguration.setCountByExampleStatementEnabled(false);
-			tableConfiguration.setDeleteByExampleStatementEnabled(false);
-			tableConfiguration.setSelectByExampleStatementEnabled(false);
-			tableConfiguration.setUpdateByExampleStatementEnabled(false);
+			tableConfiguration.setSelectByPrimaryKeyStatementEnabled(false);
+			tableConfiguration.setUpdateByPrimaryKeyStatementEnabled(false);
+			tableConfiguration.setDeleteByPrimaryKeyStatementEnabled(false);
+			tableConfiguration.setInsertStatementEnabled(false);
 	        tableConfiguration.setTableName(tableName);
 	        tableConfiguration.setDomainObjectName(modelName);
 	        tableConfiguration.setGeneratedKey(new GeneratedKey("id", "Mysql", true, null));

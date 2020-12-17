@@ -19,24 +19,26 @@ public class CodeGeneratorConfig {
 
 	// java文件路径
 	protected static String JAVA_PATH;
-	// 资源文件路径
-	protected static String RESOURCES_PATH;
 	/*
 	* 刘春春修改：增加实体类文件路径和xml文件路径
 	* */
+	//基础包路径
+	protected static String BASE_PACKAGE;
 	// 实体类文件路径
 	protected static String MODEL_PATH;
-	// mapper xml文件路径
+	// mapper dao文件路径
 	protected static String MAPPER_PATH;
 	// 模板存放位置
 	protected static String TEMPLATE_FILE_PATH;
 	
 	// 项目基础包
-	protected static String BASE_PACKAGE;
+	protected static String PACKAGE_PATH;
 	// 项目 Model 所在包
 	protected static String MODEL_PACKAGE;
 	// 项目 Mapper 所在包
 	protected static String MAPPER_PACKAGE;
+	//  项目Mapper XML所在包
+    protected static String XML_MAPPER_PACKAGE;
 	//增强 Mapper所在包
 	protected static String BASE_MAPPER_PACKAGE;
 	// 项目 Service 所在包
@@ -49,13 +51,7 @@ public class CodeGeneratorConfig {
 	// 生成的 Service 存放路径
 	protected static String PACKAGE_PATH_SERVICE;
 
-	protected static String PACKAGE_PATH_MODEL;
-
 	protected static String PACKAGE_PATH_MAPPER;
-
-	protected static String PACKAGE_PATH_BASE_MAPPER;
-	// 生成的 Service 实现存放路径
-	protected static String PACKAGE_PATH_SERVICE_IMPL;
 	// 生成的 Controller 存放路径
 	protected static String PACKAGE_PATH_CONTROLLER;
 	

@@ -1,36 +1,89 @@
 package ${servicePackage}<#--.${sign}-->;
 
-<#--刘春春修改，自动生成代码约束方法名 import com.hoze.pf.common.base.BaseService;-->
-import com.hoze.pf.common.vo.PaginationVO;
-import com.hoze.pf.common.vo.BaseRequestVO;
-import java.util.List;
-import com.hoze.pf.common.exception.CommonException;
+import org.springframework.stereotype.Service;
 import ${modelPackage}.${modelNameUpperCamel};
-<#--import ${basePackage}.model&lt;#&ndash;.${sign}&ndash;&gt;.${modelNameUpperCamel};
-import ${basePackage}.service.Service;-->
+import ${mapperPackage};
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.resafety.util.IDUtils;
+import com.resafety.util.DateUtils;
 
 /**
  * ${modelNameLowerCamel}服务类
  * Created by ${author} on ${date}.
  */
-public interface ${modelNameUpperCamel}Service<#--刘春春修改，自动生成代码约束方法名 extends BaseService<${modelNameUpperCamel}>--> {
-    List<${modelNameUpperCamel}> findAll() throws CommonException;
+@Service
+public class ${modelNameUpperCamel}Service {
+    @Autowired
+    private ${modelNameUpperCamel}Dao ${modelNameLowerCamel}Dao;
 
-    List<${modelNameUpperCamel}> findByModel(${modelNameUpperCamel} ${modelNameLowerCamel}) throws CommonException;
+    /***
+    * 查询列表
+    * @param pageNum
+    * @param pageSize
+    * TODO @param yourField
+    * @return
+    */
+    public JSONObject list(Integer pageNum, Integer pageSize,String yourField){
+        JSONObject result = new JSONObject();
+        ${modelNameUpperCamel} ${modelNameLowerCamel} = new ${modelNameUpperCamel}();
+        //${modelNameLowerCamel}.setYourField(yourField);
+        PageHelper.startPage(pageNum, pageSize);
+        List<${modelNameUpperCamel}> list = ${modelNameLowerCamel}Dao.list(${modelNameLowerCamel});
+        PageInfo<${modelNameUpperCamel}> pageInfo = new PageInfo<${modelNameUpperCamel}>(list);
+        JSONArray root = (JSONArray)JSON.toJSON(list);
+        result.put("root", root);
+        result.put("totalCount", Long.valueOf(pageInfo.getTotal()));
+        return result;
+    }
 
-    PaginationVO<${modelNameUpperCamel}> findPage(BaseRequestVO requestVO) throws CommonException;
+    /**
+    * 新增数据
+    * @return 是否成功
+    */
+    public int insert(${modelNameUpperCamel} ${modelNameLowerCamel}) {
+        ${modelNameLowerCamel}.setId(IDUtils.get());
+        ${modelNameLowerCamel}.setCreateTime(DateUtils.getNowDate());
+        return ${modelNameLowerCamel}Dao.add(${modelNameLowerCamel});
+    }
 
-    ${modelNameUpperCamel} getById(${primaryKeyType} ${primaryKeyName}) throws CommonException;
+    /**
+    * 修改数据
+    * @return 是否成功
+    */
+    public int update(${modelNameUpperCamel} ${modelNameLowerCamel}) {
+        ${modelNameLowerCamel}.setUpdateTime(DateUtils.getNowDate());
+        return ${modelNameLowerCamel}Dao.update${modelNameUpperCamel}ById(${modelNameLowerCamel});
+    }
 
-    int isExist(${modelNameUpperCamel} ${modelNameLowerCamel}) throws CommonException;
+    /**
+    * 通过主键删除数据
+    * @param ids 主键
+    * @return 是否成功
+    */
+    public int deleteByIds(String[] ids) {
+        if (ids != null && ids.length >0){
+            for (String id : ids){
+                ${modelNameLowerCamel}Dao.deleteById(id);
+            }
+            return 1;
+        }else{
+            return 0;
+        }
+    }
 
-    int insert(${modelNameUpperCamel} ${modelNameLowerCamel}) throws CommonException;
-
-    int insertSelective(${modelNameUpperCamel} ${modelNameLowerCamel}) throws CommonException;
-
-    int updateByIdSelective(${modelNameUpperCamel} ${modelNameLowerCamel}) throws CommonException;
-
-    int updateById(${modelNameUpperCamel} ${modelNameLowerCamel}) throws CommonException;
-
-    int deleteById(${primaryKeyType} ${primaryKeyName}) throws CommonException;
+    /**
+    *  根据 查询详情
+    * @Param id
+    * @Return template
+    * @Exception
+    */
+    public JSONObject find${modelNameUpperCamel}ById(String id) {
+        JSONObject result = new JSONObject();
+        ${modelNameUpperCamel} ${modelNameUpperCamel} = ${modelNameLowerCamel}Dao.selectById(id);
+        JSONObject data = (JSONObject)JSON.toJSON(${modelNameUpperCamel});
+        result.put("data", data);
+        result.put("code", Integer.valueOf(200));
+        return result;
+    }
 }

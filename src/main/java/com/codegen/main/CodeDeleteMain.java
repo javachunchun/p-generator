@@ -9,7 +9,7 @@ import com.codegen.service.CodeGeneratorManager;
  * @create: 2019-01-26 13:43
  **/
 public class CodeDeleteMain {
-    private static final String TABLE = "eee";
+    private static final String TABLE = "sms_template";
 
     private static final boolean reMoveController = true;
     private static final boolean reMoveService = true;

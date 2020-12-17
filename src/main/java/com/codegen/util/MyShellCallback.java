@@ -32,7 +32,7 @@ public class MyShellCallback extends DefaultShellCallback {
 
     @Override
     public boolean isOverwriteEnabled() {
-        return false;
+        return true;
     }
 
     @Override
@@ -90,7 +90,7 @@ public class MyShellCallback extends DefaultShellCallback {
             newFields.addAll(oldFields);
             newFields.addAll(fieldsModifiable);
             for (FieldDeclaration f : newFields) {
-                sb.append("\t" + f.toString());
+                sb.append("\t" + f.toString().replaceAll("\r\n", "\r\n\t"));
                 newLine(sb);
                 newLine(sb);
             }

@@ -1,21 +1,23 @@
 package ${serviceImplPackage};
 
-import com.alibaba.dubbo.config.annotation.Service;
+<#--import com.alibaba.dubbo.config.annotation.Service;-->
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import javax.annotation.Resource;
+import com.bjsdzk.common.core.AbstractService;
 import ${servicePackage}.${modelNameUpperCamel}Service;
 import ${mapperPackage}.${modelNameUpperCamel}Mapper;
 import ${modelPackage}.${modelNameUpperCamel};
-import com.hoze.pf.common.vo.PaginationVO;
+<#--import com.hoze.pf.common.vo.PaginationVO;
 import com.hoze.pf.common.vo.BaseRequestVO;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.hoze.pf.common.exception.CommonException;
 import com.hoze.pf.common.utils.UUIDUtil;
 import com.hoze.pf.common.utils.StringUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-import java.util.List;
+import java.util.List;-->
 
 /**
  * ${modelNameLowerCamel}服务实现类
@@ -23,14 +25,14 @@ import java.util.List;
  */
 @Service
 @Transactional
-public class ${modelNameUpperCamel}ServiceImpl implements ${modelNameUpperCamel}Service{
+public class ${modelNameUpperCamel}ServiceImpl extends AbstractService<${modelNameUpperCamel}> implements ${modelNameUpperCamel}Service{
 
     private static final Logger LOGGER = LoggerFactory.getLogger(${modelNameUpperCamel}ServiceImpl.class);
 
-    @Autowired
+    @Resource
     private ${modelNameUpperCamel}Mapper ${modelNameLowerCamel}Mapper;
 
-    @Override
+    <#--@Override
     public int insert(${modelNameUpperCamel} ${modelNameLowerCamel}) throws CommonException {
         if(StringUtil.isNull(${modelNameLowerCamel}.get${primaryKeyNameUpperFirst}())){
             String uuid32 = UUIDUtil.getUUID32();
@@ -138,6 +140,6 @@ public class ${modelNameUpperCamel}ServiceImpl implements ${modelNameUpperCamel}
                 throw new CommonException("名称全局唯一不能重复");
             }
         }*/
-    }
+    }-->
 
 }

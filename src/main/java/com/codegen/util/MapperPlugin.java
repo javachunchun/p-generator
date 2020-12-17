@@ -2,10 +2,7 @@ package com.codegen.util;
 
 import org.mybatis.generator.api.*;
 import org.mybatis.generator.api.dom.java.*;
-import org.mybatis.generator.api.dom.xml.Attribute;
-import org.mybatis.generator.api.dom.xml.Document;
-import org.mybatis.generator.api.dom.xml.TextElement;
-import org.mybatis.generator.api.dom.xml.XmlElement;
+import org.mybatis.generator.api.dom.xml.*;
 import org.mybatis.generator.codegen.mybatis3.MyBatis3FormattingUtilities;
 import org.mybatis.generator.exception.ShellException;
 import org.mybatis.generator.internal.DefaultShellCallback;
@@ -107,49 +104,25 @@ public class MapperPlugin extends PluginAdapter {
         sql.addElement(where);
         parentElement.addElement(sql);
 
-        // 添加sql_code_name_like
-        XmlElement sqlCodeNameLike = new XmlElement("sql");
-        sqlCodeNameLike.addAttribute(new Attribute("id", "sql_code_name_like"));
-        XmlElement sqlCodeNameLikeWhere = new XmlElement("where");
-        XmlElement sqlCodeNameLikeTrim = new XmlElement("trim");
-        sqlCodeNameLikeTrim.addAttribute(new Attribute("prefix","("));
-        sqlCodeNameLikeTrim.addAttribute(new Attribute("suffix",")"));
-        sqlCodeNameLikeTrim.addAttribute(new Attribute("prefixOverrides","or"));
-        StringBuilder sqlCodeNameLikeSb = new StringBuilder();
-        for (IntrospectedColumn introspectedColumn : introspectedTable.getNonPrimaryKeyColumns()) {
-            String javaProperty = introspectedColumn.getJavaProperty();
-            if ("sdOrg".equals(javaProperty) || "idTet".equals(javaProperty)) {
-                continue;
+        // 添加Base_Column_List
+        XmlElement baseColumnListSql = new XmlElement("sql");
+        baseColumnListSql.addAttribute(new Attribute("id", "Base_Column_List"));
+        for (int i = 0; i < introspectedTable.getAllColumns().size(); i++) {
+            IntrospectedColumn introspectedColumn = introspectedTable.getAllColumns().get(i);
+            if (i < introspectedTable.getAllColumns().size() - 1) {
+                baseColumnListSql.addElement(new TextElement(MyBatis3FormattingUtilities.getEscapedColumnName(introspectedColumn) + ","));
+            } else {
+                baseColumnListSql.addElement(new TextElement(MyBatis3FormattingUtilities.getEscapedColumnName(introspectedColumn)));
             }
-            XmlElement isNotNullElement = new XmlElement("if"); //$NON-NLS-1$
-            sqlCodeNameLikeSb.setLength(0);
-            sqlCodeNameLikeSb.append(javaProperty);
-            sqlCodeNameLikeSb.append(" != null"); //$NON-NLS-1$
-            sqlCodeNameLikeSb.append(" and "); //$NON-NLS-1$
-            sqlCodeNameLikeSb.append(javaProperty);
-            sqlCodeNameLikeSb.append(" != ''"); //$NON-NLS-1$
-            isNotNullElement.addAttribute(new Attribute("test", sqlCodeNameLikeSb.toString())); //$NON-NLS-1$
-
-            sqlCodeNameLikeSb.setLength(0);
-            sqlCodeNameLikeSb.append(" or ");
-            sqlCodeNameLikeSb.append(MyBatis3FormattingUtilities.getEscapedColumnName(introspectedColumn));
-            sqlCodeNameLikeSb.append(" like \"%\""); //$NON-NLS-1$
-            sqlCodeNameLikeSb.append(MyBatis3FormattingUtilities.getParameterClause(introspectedColumn));
-            sqlCodeNameLikeSb.append("\"%\"");
-            isNotNullElement.addElement(new TextElement(sqlCodeNameLikeSb.toString()));
-
-            sqlCodeNameLikeTrim.addElement(isNotNullElement);
         }
-        sqlCodeNameLikeWhere.addElement(sqlCodeNameLikeTrim);
-        sqlCodeNameLike.addElement(sqlCodeNameLikeWhere);
-        parentElement.addElement(sqlCodeNameLike);
+        parentElement.addElement(baseColumnListSql);
 
-        //添加getList
+        //添加list
         XmlElement select = new XmlElement("select");
-        select.addAttribute(new Attribute("id", "findByModel"));
+        select.addAttribute(new Attribute("id", "list"));
         select.addAttribute(new Attribute("resultMap", "BaseResultMap"));
         select.addAttribute(new Attribute("parameterType", introspectedTable.getBaseRecordType()));
-        select.addElement(new TextElement(" select <include refid=\"Base_Column_List\" /> from "+ introspectedTable.getFullyQualifiedTableNameAtRuntime()));
+        select.addElement(new TextElement("select <include refid=\"Base_Column_List\" /> from "+ introspectedTable.getFullyQualifiedTableNameAtRuntime()));
 
         XmlElement include = new XmlElement("include");
         include.addAttribute(new Attribute("refid", "sql_where"));
@@ -157,61 +130,115 @@ public class MapperPlugin extends PluginAdapter {
         select.addElement(include);
         parentElement.addElement(select);
 
-        //添加getList
-        XmlElement delete = new XmlElement("delete");
-        delete.addAttribute(new Attribute("id", "deleteByModel"));
-        delete.addAttribute(new Attribute("parameterType", introspectedTable.getBaseRecordType()));
-        delete.addElement(new TextElement(" delete from "+ introspectedTable.getFullyQualifiedTableNameAtRuntime()));
+        //添加selectById
+        XmlElement selectById = new XmlElement("select");
+        selectById.addAttribute(new Attribute("id", "selectById"));
+        selectById.addAttribute(new Attribute("resultMap", "BaseResultMap"));
+        selectById.addAttribute(new Attribute("parameterType", introspectedTable.getBaseRecordType()));
+        selectById.addElement(new TextElement("select <include refid=\"Base_Column_List\" /> from "+ introspectedTable.getFullyQualifiedTableNameAtRuntime()+"" +
+                " where id= #{id}"));
 
-        XmlElement deleteInclude = new XmlElement("include");
-        deleteInclude.addAttribute(new Attribute("refid", "sql_where"));
+        parentElement.addElement(selectById);
 
-        delete.addElement(deleteInclude);
-        parentElement.addElement(delete);
+        //添加selectByIds
+        XmlElement selectByIds = new XmlElement("select");
+        selectByIds.addAttribute(new Attribute("id", "selectByIds"));
+        selectByIds.addAttribute(new Attribute("resultMap", "BaseResultMap"));
+        selectByIds.addAttribute(new Attribute("parameterType", introspectedTable.getBaseRecordType()));
+        selectByIds.addElement(new TextElement("select <include refid=\"Base_Column_List\" /> from "+ introspectedTable.getFullyQualifiedTableNameAtRuntime()));
 
-        //添加findByLike
-        XmlElement findByLike = new XmlElement("select");
-        findByLike.addAttribute(new Attribute("id", "findByLike"));
-        findByLike.addAttribute(new Attribute("resultMap", "BaseResultMap"));
-        findByLike.addAttribute(new Attribute("parameterType", introspectedTable.getBaseRecordType()));
-        findByLike.addElement(new TextElement(" select * from "+ introspectedTable.getFullyQualifiedTableNameAtRuntime()));
+        XmlElement selectByIdsIf = new XmlElement("if");
+        selectByIdsIf.addAttribute(new Attribute("test", "idList != null and idList.size != 0"));
+        selectByIdsIf.addElement(new TextElement("where id in"));
 
-        XmlElement findByLikeInclude = new XmlElement("include");
-        findByLikeInclude.addAttribute(new Attribute("refid", "sql_code_name_like"));
+        XmlElement selectByIdsForeach = new XmlElement("foreach");
+        selectByIdsForeach.addAttribute(new Attribute("collection", "idList"));
+        selectByIdsForeach.addAttribute(new Attribute("item", "id"));
+        selectByIdsForeach.addAttribute(new Attribute("open", "("));
+        selectByIdsForeach.addAttribute(new Attribute("close", ")"));
+        selectByIdsForeach.addAttribute(new Attribute("separator", ","));
+        selectByIdsForeach.addElement(new TextElement("#{id}"));
 
-        findByLike.addElement(findByLikeInclude);
-        parentElement.addElement(findByLike);
+        selectByIdsIf.addElement(selectByIdsForeach);
+        selectByIds.addElement(selectByIdsIf);
 
-        //添加findAll
-        XmlElement findAll = new XmlElement("select");
-        findAll.addAttribute(new Attribute("id", "findAll"));
-        findAll.addAttribute(new Attribute("resultMap", "BaseResultMap"));
-        findAll.addElement(new TextElement(" select <include refid=\"Base_Column_List\" /> from "+ introspectedTable.getFullyQualifiedTableNameAtRuntime()));
+        parentElement.addElement(selectByIds);
 
-        parentElement.addElement(findAll);
-
-        String countWhat = "*";
-        List<IntrospectedColumn> primaryKeyColumns = introspectedTable.getPrimaryKeyColumns();
-        if (primaryKeyColumns != null && primaryKeyColumns.size() >= 0) {
-            IntrospectedColumn introspectedColumn = primaryKeyColumns.get(0);
-            countWhat = introspectedColumn.getJavaProperty();
+        // 添加add
+        XmlElement add = new XmlElement("insert");
+        add.addAttribute(new Attribute("id", "add"));
+        add.addAttribute(new Attribute("parameterType", introspectedTable.getBaseRecordType()));
+        add.addElement(new TextElement("insert into " + introspectedTable.getFullyQualifiedTableNameAtRuntime()));
+        add.addElement(new TextElement("("));
+        for (int i = 0; i < introspectedTable.getAllColumns().size(); i++) {
+            IntrospectedColumn introspectedColumn = introspectedTable.getAllColumns().get(i);
+            if (i < introspectedTable.getAllColumns().size() - 1) {
+                add.addElement(new TextElement(MyBatis3FormattingUtilities.getEscapedColumnName(introspectedColumn) + ","));
+            }
         }
-        //添加isExist
-        XmlElement isExistSelect = new XmlElement("select");
-        isExistSelect.addAttribute(new Attribute("id", "isExist"));
-        isExistSelect.addAttribute(new Attribute("resultType", "java.lang.Integer"));
-        isExistSelect.addAttribute(new Attribute("parameterType", introspectedTable.getBaseRecordType()));
-        isExistSelect.addElement(new TextElement(" select count("+countWhat+") from "+ introspectedTable.getFullyQualifiedTableNameAtRuntime()));
-        isExistSelect.addElement(include);
-        parentElement.addElement(isExistSelect);
+        add.addElement(new TextElement(")"));
 
-        return super.sqlMapDocumentGenerated(document, introspectedTable);
+        add.addElement(new TextElement("values"));
+        add.addElement(new TextElement("("));
+        for (int i = 0; i < introspectedTable.getAllColumns().size(); i++) {
+            IntrospectedColumn introspectedColumn = introspectedTable.getAllColumns().get(i);
+            if (i < introspectedTable.getAllColumns().size() - 1) {
+                add.addElement(new TextElement(MyBatis3FormattingUtilities.getParameterClause(introspectedColumn) + ","));
+            } else {
+                add.addElement(new TextElement(MyBatis3FormattingUtilities.getParameterClause(introspectedColumn)));
+            }
+        }
+        add.addElement(new TextElement(")"));
+
+        parentElement.addElement(add);
+
+        // 添加update
+        XmlElement update = new XmlElement("update");
+        update.addAttribute(new Attribute("id", "update" + introspectedTable.getTableConfiguration().getDomainObjectName() + "ById"));
+        update.addAttribute(new Attribute("parameterType", introspectedTable.getBaseRecordType()));
+        update.addElement(new TextElement("update "+ introspectedTable.getFullyQualifiedTableNameAtRuntime()));
+        XmlElement set = new XmlElement("set");
+        StringBuilder setSb = new StringBuilder();
+        for (IntrospectedColumn introspectedColumn : introspectedTable.getNonPrimaryKeyColumns()) {
+            XmlElement ifElement = new XmlElement("if"); //$NON-NLS-1$
+            setSb.setLength(0);
+            setSb.append(introspectedColumn.getJavaProperty());
+            setSb.append(" != null"); //$NON-NLS-1$
+            FullyQualifiedJavaType javaType = introspectedColumn.getFullyQualifiedJavaType();
+            if (javaType.getShortName().contains("String")) {
+                setSb.append(" and "); //$NON-NLS-1$
+                setSb.append(introspectedColumn.getJavaProperty());
+                setSb.append(" != ''"); //$NON-NLS-1$
+            }
+            ifElement.addAttribute(new Attribute("test", setSb.toString())); //$NON-NLS-1$
+
+            setSb.setLength(0);
+            setSb.append(MyBatis3FormattingUtilities.getEscapedColumnName(introspectedColumn));
+            setSb.append(" = "); //$NON-NLS-1$
+            setSb.append(MyBatis3FormattingUtilities.getParameterClause(introspectedColumn));
+            setSb.append(",");
+            ifElement.addElement(new TextElement(setSb.toString()));
+            set.addElement(ifElement);
+        }
+
+        update.addElement(set);
+        parentElement.addElement(update);
+
+        //添加deleteById
+        XmlElement deleteById = new XmlElement("delete");
+        deleteById.addAttribute(new Attribute("id", "deleteById"));
+        deleteById.addAttribute(new Attribute("parameterType", "int"));
+        deleteById.addElement(new TextElement("delete from "+ introspectedTable.getFullyQualifiedTableNameAtRuntime()+"" +
+                " where id= #{id}"));
+
+        parentElement.addElement(deleteById);
+
+        return true;
     }
 
     @Override
     public List<GeneratedJavaFile> contextGenerateAdditionalJavaFiles(IntrospectedTable introspectedTable) {
         MybatisGeneratorContext instance = MybatisGeneratorContext.getInstance();
-        System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"+instance);
         instance.setIntrospectedTable(introspectedTable);
 
         JavaFormatter javaFormatter = context.getJavaFormatter();
@@ -227,7 +254,7 @@ public class MapperPlugin extends PluginAdapter {
             if (shortName.endsWith("Mapper")) { // 扩展Mapper
                 if (stringHasValue(expandDaoTargetPackage)) {
                     Interface mapperInterface = new Interface(
-                            expandDaoTargetPackage + "." + shortName.replace("Mapper", "ExpandMapper"));
+                            expandDaoTargetPackage + "." + shortName.replace("Mapper", "Dao"));
                     mapperInterface.setVisibility(JavaVisibility.PUBLIC);
                     mapperInterface.addJavaDocLine("/**");
                     mapperInterface.addJavaDocLine(" * " + shortName + "扩展");
@@ -238,7 +265,7 @@ public class MapperPlugin extends PluginAdapter {
                     mapperInterface.addSuperInterface(daoSuperType);
 
                     Method method = new Method();
-                    method.setName("findByModel");
+                    method.setName("list");
                     Parameter p = new Parameter(new FullyQualifiedJavaType(StringUtils.toUpperCaseFirstOne(shortName)),shortName);
                     method.addParameter(p);
 
@@ -264,36 +291,36 @@ public class MapperPlugin extends PluginAdapter {
                     }
                 }
             } else if (!shortName.endsWith("Example")) { // CRUD Mapper
-                Interface mapperInterface = new Interface(daoTargetPackage + "." + shortName + "Mapper");
+                Interface mapperInterface = new Interface(daoTargetPackage + "." + shortName + "Dao");
 
  
                 mapperInterface.setVisibility(JavaVisibility.PUBLIC);
                 mapperInterface.addJavaDocLine("/**");
                 mapperInterface.addJavaDocLine(" * "+shortName+"数据接口");
                 mapperInterface.addJavaDocLine(" */");
-                mapperInterface.addAnnotation("@Mapper");
-                mapperInterface.addImportedType(new FullyQualifiedJavaType("org.apache.ibatis.annotations.Mapper"));
+                FullyQualifiedJavaType fullyQualifiedJavaType = new FullyQualifiedJavaType("Mapper");
+                fullyQualifiedJavaType.addTypeArgument(new FullyQualifiedJavaType(shortName));
+//                mapperInterface.addSuperInterface(fullyQualifiedJavaType);
+//                mapperInterface.addImportedType(new FullyQualifiedJavaType("com.bjsdzk.common.core.Mapper"));
+                mapperInterface.addImportedType(baseModelJavaType);
+//                mapperInterface.addAnnotation("@Mapper");
+//                mapperInterface.addImportedType(new FullyQualifiedJavaType("org.apache.ibatis.annotations.Mapper"));
 
                 String lowerFirstName = StringUtils.toLowerCaseFirstOne(shortName);
                 /*
-                * findByModel方法
+                * list方法
                 * */
                 //设置方法参数
-                Parameter findByModelParam = new Parameter(baseModelJavaType,lowerFirstName);
+                Parameter listParam = new Parameter(baseModelJavaType,lowerFirstName);
                 //设置方法返回值
-                FullyQualifiedJavaType findByModelReturnType = new FullyQualifiedJavaType("List");
-                findByModelReturnType.addTypeArgument(baseModelJavaType);
+                FullyQualifiedJavaType listReturnType = new FullyQualifiedJavaType("List");
+                listReturnType.addTypeArgument(baseModelJavaType);
                 //设置引入此方法所需要导入的包
-                List<FullyQualifiedJavaType> findByModelImports = new ArrayList<>();
-                findByModelImports.add(new FullyQualifiedJavaType("java.util.List"));
-                findByModelImports.add(baseModelJavaType);
+                List<FullyQualifiedJavaType> listImports = new ArrayList<>();
+                listImports.add(new FullyQualifiedJavaType("java.util.List"));
+                listImports.add(baseModelJavaType);
 
-                Method findByModel = buildMethod(mapperInterface, baseModelJavaType, "findByModel", findByModelParam, findByModelReturnType, findByModelImports);
-
-                /*
-                * findByLike方法
-                * */
-                Method findByLike = buildMethod(mapperInterface, baseModelJavaType, "findByLike", findByModelParam, findByModelReturnType, null);
+                Method list = buildMethod(mapperInterface, baseModelJavaType, "list", listParam, listReturnType, listImports);
 
                 List<IntrospectedColumn> primaryKeyColumns = introspectedTable.getPrimaryKeyColumns();
                 if (primaryKeyColumns == null || primaryKeyColumns.size() <= 0) {
@@ -304,103 +331,66 @@ public class MapperPlugin extends PluginAdapter {
                 String javaProperty = primaryKey.getJavaProperty();
 
                 /*
-                * findAll方法
-                * */
-                Method findAll = buildMethod(mapperInterface, baseModelJavaType, "findAll", null
-                        , findByModelReturnType, null);
+                 * selectById方法
+                 * */
+                //设置方法参数
+                Parameter selectByIdParam = new Parameter(/*参数类型*/primaryType,/*形参*/javaProperty);
+                //设置方法返回值
+                FullyQualifiedJavaType selectByIdReturnType = baseModelJavaType;
+
+                Method selectById = buildMethod(mapperInterface, baseModelJavaType, "selectById", selectByIdParam, selectByIdReturnType, null);
 
                 /*
-                * deleteByPrimaryKey方法
-                * */
+                 * selectByIds方法
+                 * */
                 //设置方法参数
-                Parameter deleteByPrimaryKeyParam = new Parameter(/*参数类型*/primaryType,/*形参*/javaProperty);
+                FullyQualifiedJavaType listType = new FullyQualifiedJavaType("List");
+                FullyQualifiedJavaType stringType = new FullyQualifiedJavaType("String");
+                listType.addTypeArgument(stringType);
+
+                Parameter selectByIdsParam = new Parameter(/*参数类型*/listType,/*形参*/javaProperty + "List");
                 //设置方法返回值
-                FullyQualifiedJavaType deleteByPrimaryKeyReturnType = new FullyQualifiedJavaType("int");
-                Method deleteByPrimaryKey = buildMethod(mapperInterface, baseModelJavaType, "deleteByPrimaryKey", deleteByPrimaryKeyParam, deleteByPrimaryKeyReturnType, null);
+                FullyQualifiedJavaType selectByIdsReturnType = baseModelJavaType;
+
+                Method selectByIds = buildMethod(mapperInterface, baseModelJavaType, "selectByIds", selectByIdsParam, selectByIdsReturnType, null);
 
                 /*
-                * deleteByModel方法
-                * */
+                 * add方法
+                 * */
                 //设置方法参数
-                Parameter deleteByModelParam = new Parameter(baseModelJavaType,lowerFirstName);
+                Parameter addParam = new Parameter(/*参数类型*/baseModelJavaType,/*形参*/lowerFirstName);
                 //设置方法返回值
-                FullyQualifiedJavaType deleteByModelReturnType = new FullyQualifiedJavaType("int");
-                Method deleteByModel = buildMethod(mapperInterface, baseModelJavaType, "deleteByModel", deleteByModelParam, deleteByModelReturnType, null);
+                FullyQualifiedJavaType addReturnType = new FullyQualifiedJavaType("int");
+
+                Method add = buildMethod(mapperInterface, baseModelJavaType, "add", addParam, addReturnType, null);
 
                 /*
-                * insert方法
-                * */
+                 * updateById方法
+                 * */
                 //设置方法参数
-                Parameter insertParam = new Parameter(/*参数类型*/baseModelJavaType,/*形参*/lowerFirstName);
+                Parameter updateByIdParam = new Parameter(/*参数类型*/baseModelJavaType,/*形参*/lowerFirstName);
                 //设置方法返回值
-                FullyQualifiedJavaType insertReturnType = new FullyQualifiedJavaType("int");
+                FullyQualifiedJavaType updateByIdReturnType = new FullyQualifiedJavaType("int");
 
-                Method insert = buildMethod(mapperInterface, baseModelJavaType, "insert", insertParam, insertReturnType, null);
-
+                Method updateById = buildMethod(mapperInterface, baseModelJavaType, "update" + shortName + "ById", updateByIdParam, updateByIdReturnType, null);
 
                 /*
-                * insertSelective方法
+                * deleteById方法
                 * */
                 //设置方法参数
-                Parameter insertSelectiveParam = new Parameter(/*参数类型*/baseModelJavaType,/*形参*/lowerFirstName);
+                Parameter deleteByIdParam = new Parameter(/*参数类型*/primaryType,/*形参*/javaProperty);
                 //设置方法返回值
-                FullyQualifiedJavaType insertSelectiveReturnType = new FullyQualifiedJavaType("int");
+                FullyQualifiedJavaType deleteByIdReturnType = new FullyQualifiedJavaType("int");
+                Method deleteByPrimaryKey = buildMethod(mapperInterface, baseModelJavaType, "deleteById", deleteByIdParam, deleteByIdReturnType, null);
 
-                Method insertSelective = buildMethod(mapperInterface, baseModelJavaType, "insertSelective", insertSelectiveParam, insertSelectiveReturnType, null);
-
-                /*
-                * getByPrimaryKey方法
-                * */
-                //设置方法参数
-                Parameter selectByPrimaryKeyParam = new Parameter(/*参数类型*/primaryType,/*形参*/javaProperty);
-                //设置方法返回值
-                FullyQualifiedJavaType selectByPrimaryKeyReturnType = baseModelJavaType;
-
-                Method selectByPrimaryKey = buildMethod(mapperInterface, baseModelJavaType, "selectByPrimaryKey", selectByPrimaryKeyParam, selectByPrimaryKeyReturnType, null);
-
-                /*
-                * updateByPrimaryKeySelective方法
-                * */
-                //设置方法参数
-                Parameter updateByPrimaryKeySelectiveParam = new Parameter(/*参数类型*/baseModelJavaType,/*形参*/lowerFirstName);
-                //设置方法返回值
-                FullyQualifiedJavaType updateByPrimaryKeySelectiveReturnType = new FullyQualifiedJavaType("int");
-
-                Method updateByPrimaryKeySelective = buildMethod(mapperInterface, baseModelJavaType, "updateByPrimaryKeySelective", updateByPrimaryKeySelectiveParam, updateByPrimaryKeySelectiveReturnType, null);
-
-                /*
-                * updateByPrimaryKey方法
-                * */
-                //设置方法参数
-                Parameter updateByPrimaryKeyParam = new Parameter(/*参数类型*/baseModelJavaType,/*形参*/lowerFirstName);
-                //设置方法返回值
-                FullyQualifiedJavaType updateByPrimaryKeyReturnType = new FullyQualifiedJavaType("int");
-
-                Method updateByPrimaryKey = buildMethod(mapperInterface, baseModelJavaType, "updateByPrimaryKey", updateByPrimaryKeyParam, updateByPrimaryKeyReturnType, null);
-
-                /*
-                * isExist方法
-                * */
-                //设置方法参数
-                Parameter isExistParam = new Parameter(/*参数类型*/primaryType,/*形参*/javaProperty);
-                //设置方法返回值
-                FullyQualifiedJavaType isExistReturnType = new FullyQualifiedJavaType("int");
-
-                Method isExist = buildMethod(mapperInterface, baseModelJavaType, "isExist", updateByPrimaryKeyParam, updateByPrimaryKeyReturnType, null);
-
-                mapperInterface.addMethod(findByModel);
-                mapperInterface.addMethod(findByLike);
-                mapperInterface.addMethod(findAll);
+                mapperInterface.addMethod(list);
+                mapperInterface.addMethod(selectById);
+                mapperInterface.addMethod(selectByIds);
+                mapperInterface.addMethod(add);
+                mapperInterface.addMethod(updateById);
                 mapperInterface.addMethod(deleteByPrimaryKey);
-                mapperInterface.addMethod(insert);
-                mapperInterface.addMethod(insertSelective);
-                mapperInterface.addMethod(selectByPrimaryKey);
-                mapperInterface.addMethod(updateByPrimaryKeySelective);
-                mapperInterface.addMethod(updateByPrimaryKey);
-                mapperInterface.addMethod(isExist);
-                mapperInterface.addMethod(deleteByModel);
 
-                mapperJavafile = new GeneratedJavaFile(mapperInterface, daoTargetDir, "UTF-8", javaFormatter,true);
+                mapperJavafile = new GeneratedJavaFile(mapperInterface, daoTargetDir, "UTF-8", javaFormatter);
                 mapperJavaFiles.add(mapperJavafile);
  
             }

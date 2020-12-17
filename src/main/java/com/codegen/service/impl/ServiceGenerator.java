@@ -33,8 +33,8 @@ public class ServiceGenerator extends CodeGeneratorManager implements CodeGenera
 		try {
 			if(reBuildService) {
 				// 创建 Service 接口
-				File serviceFile = new File(PROJECT_PATH + JAVA_PATH + PACKAGE_PATH_SERVICE + /*customMapping
-					+*/ modelNameUpperCamel + "Service.java");
+				File serviceFile = new File(PROJECT_PATH + PACKAGE_PATH + SERVICE_PACKAGE.replace(".", "/")
+						+ "/"+ modelNameUpperCamel + "Service.java");
 				// 查看父级目录是否存在, 不存在则创建
 				if (!serviceFile.getParentFile().exists()) {
 					serviceFile.getParentFile().mkdirs();
@@ -56,8 +56,8 @@ public class ServiceGenerator extends CodeGeneratorManager implements CodeGenera
 			}
 			if(reBuildServiceImpl) {
 				// 创建 Service 接口的实现类
-				File serviceImplFile = new File(PROJECT_PATH + JAVA_PATH + PACKAGE_PATH_SERVICE_IMPL + /*customMapping
-					+*/ modelNameUpperCamel + "ServiceImpl.java");
+				File serviceImplFile = new File(PROJECT_PATH + PACKAGE_PATH + SERVICE_IMPL_PACKAGE.replace(".", "/")
+						+ "/"+modelNameUpperCamel + "ServiceImpl.java");
 				// 查看父级目录是否存在, 不存在则创建
 				if (!serviceImplFile.getParentFile().exists()) {
 					serviceImplFile.getParentFile().mkdirs();
@@ -84,7 +84,7 @@ public class ServiceGenerator extends CodeGeneratorManager implements CodeGenera
 		data.put("sign", sign);
 		data.put("modelNameUpperCamel", modelNameUpperCamel);
 		data.put("modelNameLowerCamel", StringUtils.toLowerCaseFirstOne(modelNameUpperCamel));
-		data.put("basePackage", BASE_PACKAGE);
+//		data.put("basePackage", BASE_PACKAGE);
 		data.put("modelPackage", MODEL_PACKAGE);
 		data.put("mapperPackage", MAPPER_PACKAGE);
 		data.put("serviceImplPackage", SERVICE_IMPL_PACKAGE);

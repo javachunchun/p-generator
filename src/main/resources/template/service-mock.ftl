@@ -42,7 +42,7 @@ public class ${modelNameUpperCamel}ServiceMock implements ${modelNameUpperCamel}
     }
 
     @Override
-    public List<${modelNameUpperCamel}> findByModel(${modelNameUpperCamel} ${modelNameLowerCamel}) {
+    public List<${modelNameUpperCamel}> list(${modelNameUpperCamel} ${modelNameLowerCamel}) {
         return null;
     }
 

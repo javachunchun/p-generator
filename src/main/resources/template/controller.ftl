@@ -1,95 +1,91 @@
 package ${controllerPackage}<#--.${sign}-->;
 
-import javax.servlet.http.HttpServletRequest;
-import com.alibaba.dubbo.config.annotation.Reference;
-import com.hoze.pf.common.constant.CommonResult;
-import com.hoze.pf.common.constant.CommonResultConstant;
-import com.hoze.pf.common.exception.CommonException;
-import ${servicePackage}.${modelNameUpperCamel}Service;
-import ${modelPackage}.${modelNameUpperCamel};
-import com.hoze.pf.common.vo.BaseRequestVO;
-import org.springframework.util.StringUtils;
-import com.hoze.pf.common.utils.SelectUtil;
-import com.hoze.pf.common.vo.PaginationVO;
-import com.hoze.pf.common.scan.log.annotation.ControllerAdapter;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import java.util.List;
-import java.util.Map;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import com.resafety.webioc.sys.common.BaseController;
+import com.alibaba.fastjson.JSONObject;
+import com.resafety.webioc.utils.ResultDto;
+import com.resafety.util.RequestUtils;
 
 /**
  * ${modelNameLowerCamel}控制器
  * Created by ${author} on ${date}.
  */
 @RestController
-<#--@RequestMapping("${baseRequestMapping}")-->
-@RequestMapping("/hoze/fms/${modelNameLowerCamel}/")
-@Api(description="开发中", tags="开发中")
-@ControllerAdapter
-public class ${modelNameUpperCamel}Controller {
+@RequestMapping("/${controllerMapping}")
+public class ${modelNameUpperCamel}Controller extends BaseController {
 
-    @Reference
+    @Autowired
     ${modelNameUpperCamel}Service ${modelNameLowerCamel}Service;
 
-    @ApiOperation(value="查询")
-    @RequestMapping(value = "find",method = RequestMethod.POST)
-    public CommonResult find(@RequestBody BaseRequestVO requestVO, HttpServletRequest request) throws CommonException {
-        PaginationVO<${modelNameUpperCamel}> page = ${modelNameLowerCamel}Service.findPage(requestVO);
-        return new CommonResult(CommonResultConstant.SUCCESS,page);
+    /**
+    * 查询列表
+    * @param pageNum 第几页
+    * @param pageSize 每页显示数量
+    * TODO @param yourField 查询字段
+    * @return
+    */
+    @RequestMapping("/list")
+    public JSONObject list(@RequestParam(defaultValue = "1") Integer pageNum,
+                           @RequestParam(defaultValue = "10") Integer pageSize,
+                           @RequestParam(defaultValue = "") String yourField) {
+        return ${modelNameLowerCamel}Service.list(pageNum,pageSize,yourField);
     }
 
-    @ApiOperation(value="${modelNameUpperCamel}下拉")
-    //@ApiImplicitParam(name = "yourSelectId", value = "Id解释", paramType = "query", required = false, dataType = "String")
-    @RequestMapping(value = "/select${leafName}",method = RequestMethod.GET)
-    public CommonResult select${leafName}(HttpServletRequest request/*String yourSelectId*/) throws CommonException{
-        ${modelNameUpperCamel} ${modelNameLowerCamel} = new ${modelNameUpperCamel}();
-        //${modelNameLowerCamel}.your_set_method(yourSelectId);
-        List<${modelNameUpperCamel}> ${modelNameLowerCamel}List = ${modelNameLowerCamel}Service.findByModel(${modelNameLowerCamel});
-        List<Map<String,Object>> selectListMap = SelectUtil.getSelectData(${modelNameLowerCamel}List,${modelNameUpperCamel}.class,"${primaryKeyName}","${selectName}");
-        return new CommonResult(CommonResultConstant.SUCCESS,selectListMap);
+    /**
+    * 查询详情
+    * @return
+    */
+    @RequestMapping("/data")
+    public JSONObject data() {
+        String id = RequestUtils.get("id");
+        return ${modelNameLowerCamel}Service.find${modelNameUpperCamel}ById(id);
     }
 
-    @ApiOperation(value="保存")
-    @ApiImplicitParam(name = "${modelNameLowerCamel}", value = "实体", paramType = "body",required = false,  dataType = "${modelNameUpperCamel}")
-    @RequestMapping(value = "insert",method = RequestMethod.POST)
-    public CommonResult save(@RequestBody ${modelNameUpperCamel} ${modelNameLowerCamel}, HttpServletRequest request) throws CommonException {
-        int num = ${modelNameLowerCamel}Service.insertSelective(${modelNameLowerCamel});
-        return new CommonResult(CommonResultConstant.SUCCESS, num);
-    }
-
-    @ApiOperation(value="详情")
-    @ApiImplicitParam(name = "${primaryKeyName}", value = "主键", paramType = "query",required = true,  dataType = "${primaryKeyType}")
-    @RequestMapping(value = "detail",method = RequestMethod.GET)
-    public CommonResult detail(${primaryKeyType} ${primaryKeyName}, HttpServletRequest request) throws CommonException {
-        if(StringUtils.isEmpty(${primaryKeyName})){
-            throw new CommonException("请选择要编辑的项");
+    /**
+    * 新增数据
+    * @return
+    */
+    @RequestMapping("/insert")
+    public ResultDto insert(${modelNameUpperCamel} ${modelNameLowerCamel}) {
+        int insert = ${modelNameLowerCamel}Service.insert(${modelNameLowerCamel});
+        if (insert == 1) {
+            String msg = "新增成功";
+            return new ResultDto(true, msg);
+        } else {
+            String msg = "新增失败";
+            return new ResultDto(false, msg);
         }
-        ${modelNameUpperCamel} ${modelNameLowerCamel} = ${modelNameLowerCamel}Service.getById(${primaryKeyName});
-        return new CommonResult(CommonResultConstant.SUCCESS, ${modelNameLowerCamel});
     }
 
-    @ApiOperation(value="修改")
-    @ApiImplicitParam(name = "${modelNameLowerCamel}", value = "实体", paramType = "body",required = false,  dataType = "${modelNameUpperCamel}")
-    @RequestMapping(value = "update",method = RequestMethod.POST)
-    public CommonResult update(@RequestBody ${modelNameUpperCamel} ${modelNameLowerCamel}, HttpServletRequest request) throws CommonException {
-        int num = ${modelNameLowerCamel}Service.updateByIdSelective(${modelNameLowerCamel});
-        return new CommonResult(CommonResultConstant.SUCCESS, num);
-    }
-
-    @ApiOperation(value="根据主键删除")
-    @ApiImplicitParam(name = "${primaryKeyName}", value = "主键", paramType = "query", required = true, dataType = "${primaryKeyType}")
-    @RequestMapping(value = "delete",method = RequestMethod.GET)
-    public CommonResult delete(${primaryKeyType} ${primaryKeyName}, HttpServletRequest request) throws CommonException {
-        if(StringUtils.isEmpty(${primaryKeyName})){
-            throw new CommonException("请选择要删除的项");
+    /**
+    * 更新数据
+    * @return
+    */
+    @RequestMapping("/update")
+    public ResultDto update(${modelNameUpperCamel} ${modelNameLowerCamel}) {
+        int update = ${modelNameLowerCamel}Service.update(${modelNameLowerCamel});
+        if (update == 1) {
+            return new ResultDto(true, "修改成功");
+        } else {
+            return new ResultDto(false, "修改失败");
         }
-        int num = ${modelNameLowerCamel}Service.deleteById(${primaryKeyName});
-        return new CommonResult(CommonResultConstant.SUCCESS, num);
+    }
+
+    /**
+    * 物理删除
+    * @return
+    */
+    @RequestMapping("/deleteByIds")
+    public ResultDto deleteByIds() {
+        int delete = ${modelNameLowerCamel}Service.deleteByIds(RequestUtils.getArray("id"));
+        if (delete >0 ) {
+            return new ResultDto(true, "删除成功");
+        } else {
+            return new ResultDto(false, "删除失败");
+        }
     }
 
 }

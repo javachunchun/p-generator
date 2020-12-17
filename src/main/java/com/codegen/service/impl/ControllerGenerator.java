@@ -32,8 +32,8 @@ public class ControllerGenerator extends CodeGeneratorManager implements CodeGen
 		Map<String, Object> data = getDataMapInit(tableName, modelName, sign, modelNameUpperCamel); 
 		try {
 			if(reBuildController) {
-				File controllerFile = new File(PROJECT_PATH + JAVA_PATH + PACKAGE_PATH_CONTROLLER + /*customMapping
-						 + */modelNameUpperCamel + "Controller.java");
+				File controllerFile = new File(PROJECT_PATH + PACKAGE_PATH + CONTROLLER_PACKAGE.replace(".", "/") +
+						"/"+modelNameUpperCamel + "Controller.java");
 				if (!controllerFile.getParentFile().exists()) {
 					controllerFile.getParentFile().mkdirs();
 				}
@@ -64,14 +64,15 @@ public class ControllerGenerator extends CodeGeneratorManager implements CodeGen
 		data.put("baseRequestMapping", baseRequestMapping);
         data.put("modelNameUpperCamel", modelNameUpperCamel);
         data.put("modelNameLowerCamel", CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, modelNameUpperCamel));
-        data.put("basePackage", BASE_PACKAGE);
+//        data.put("basePackage", BASE_PACKAGE);
         data.put("controllerPackage", CONTROLLER_PACKAGE);
+		data.put("controllerMapping", tableName.replace("_", "-"));
 		data.put("modelPackage", MODEL_PACKAGE);
+		data.put("mapperPackage", MAPPER_PACKAGE);
 		data.put("servicePackage", SERVICE_PACKAGE);
 
 //		获取全局变量
 		MybatisGeneratorContext instance = MybatisGeneratorContext.getInstance();
-		System.out.println("========================================="+instance);
 		IntrospectedTable introspectedTable = instance.getIntrospectedTable();
 		IntrospectedColumn introspectedColumn = introspectedTable.getPrimaryKeyColumns().get(0);
 		String shortName = introspectedColumn.getFullyQualifiedJavaType().getShortName();

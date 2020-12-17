@@ -52,14 +52,14 @@ public class CodeGeneratorManager extends CodeGeneratorConfig {
 	 */
 	public Context initMybatisGeneratorContext(String sign) {
 		Context context = new Context(ModelType.FLAT);
-		context.setId("MysqlContext");
-		context.setTargetRuntime("MyBatis3");
+		context.setId("MySql");
+		context.setTargetRuntime("MyBatis3Simple");
 		context.addProperty(PropertyRegistry.CONTEXT_BEGINNING_DELIMITER, "`");
         context.addProperty(PropertyRegistry.CONTEXT_ENDING_DELIMITER, "`");
         context.addProperty("xmlMergeable", "true");
         context.addProperty("javaMergeable", "true");
 
-        JDBCConnectionConfiguration jdbcConnectionConfiguration = new JDBCConnectionConfiguration();
+		JDBCConnectionConfiguration jdbcConnectionConfiguration = new JDBCConnectionConfiguration();
         jdbcConnectionConfiguration.setConnectionURL(JDBC_URL);
         jdbcConnectionConfiguration.setUserId(JDBC_USERNAME);
         jdbcConnectionConfiguration.setPassword(JDBC_PASSWORD);
@@ -67,19 +67,13 @@ public class CodeGeneratorManager extends CodeGeneratorConfig {
         context.setJdbcConnectionConfiguration(jdbcConnectionConfiguration);
 
 		JavaModelGeneratorConfiguration javaModelGeneratorConfiguration = new JavaModelGeneratorConfiguration();
-		javaModelGeneratorConfiguration.setTargetProject(PROJECT_PATH + JAVA_PATH + PACKAGE_PATH_MODEL);
+		javaModelGeneratorConfiguration.setTargetProject(PROJECT_PATH+PACKAGE_PATH);
 		javaModelGeneratorConfiguration.setTargetPackage(MODEL_PACKAGE + /*"." +*/ sign);
 		context.setJavaModelGeneratorConfiguration(javaModelGeneratorConfiguration);
 
-		JavaClientGeneratorConfiguration javaClientGeneratorConfiguration = new JavaClientGeneratorConfiguration();
-		javaClientGeneratorConfiguration.setTargetProject(PROJECT_PATH + JAVA_PATH+ PACKAGE_PATH_MAPPER);
-		javaClientGeneratorConfiguration.setTargetPackage(MAPPER_PACKAGE + /*"." +*/ sign);
-		javaClientGeneratorConfiguration.setConfigurationType("XMLMAPPER");
-		context.setJavaClientGeneratorConfiguration(javaClientGeneratorConfiguration);
-
 		SqlMapGeneratorConfiguration sqlMapGeneratorConfiguration = new SqlMapGeneratorConfiguration();
-		sqlMapGeneratorConfiguration.setTargetProject(PROJECT_PATH + JAVA_PATH+ RESOURCES_PATH);
-		sqlMapGeneratorConfiguration.setTargetPackage(MAPPER_PACKAGE + /*"." +*/ sign);
+		sqlMapGeneratorConfiguration.setTargetProject(PROJECT_PATH + PACKAGE_PATH);
+		sqlMapGeneratorConfiguration.setTargetPackage(XML_MAPPER_PACKAGE + /*"." +*/ sign);
 		context.setSqlMapGeneratorConfiguration(sqlMapGeneratorConfiguration);
 
 		// 增加 mapper 插件
@@ -97,25 +91,8 @@ public class CodeGeneratorManager extends CodeGeneratorConfig {
 
 	private void addMapperGender(Context context) {
 		CommentGeneratorConfiguration commentGeneratorConfiguration = new CommentGeneratorConfiguration();
-		commentGeneratorConfiguration.setConfigurationType("com.codegen.util.CommentGenerator");
-		commentGeneratorConfiguration.addProperty("suppressAllComments","true");
-		commentGeneratorConfiguration.addProperty("suppressDate","true");
+		commentGeneratorConfiguration.setConfigurationType("com.codegen.util.MySQLCommentGenerator");
 		context.setCommentGeneratorConfiguration(commentGeneratorConfiguration);
-	}
-
-	/**
-	 * 生成简单名称代码
-	 * eg: 
-	 * 	genCode("gen_test_demo");  gen_test_demo ==> Demo
-	 * @param tableNames 表名, 可以多表
-	 */
-	public void genCodeWithSimpleName(boolean reBuildController,
-									  boolean reBuildService,
-									  boolean reBuildServiceImpl,
-									  boolean reBuildServiceMock,
-									  String... tableNames) {
-		genCodeByTableName(reBuildController,reBuildService,reBuildServiceImpl,reBuildServiceMock
-				,true, tableNames);
 	}
 
 	/**
@@ -143,10 +120,14 @@ public class CodeGeneratorManager extends CodeGeneratorConfig {
 	 * 	genCode("gen_test_demo");  gen_test_demo ==> GenTestDemo
 	 * @param tableNames 表名, 可以多表
 	 */
-	public void genCodeWithDetailName(boolean reBuildController, boolean reBuildService, boolean reBuildServiceImpl, boolean reBuildServiceMock
-			, boolean reBuildModelAndMapperAndMapperXML,String ...tableNames) {
-		genCodeByTableName(reBuildController,reBuildService,reBuildServiceImpl,reBuildServiceMock
-				,false, tableNames);
+	public void genCodeWithDetailName(boolean reBuildController,
+									  boolean reBuildService,
+									  boolean reBuildServiceImpl,
+									  boolean reBuildServiceMock,
+									  String alias,
+									  String ...tableNames) {
+		genCodeByTableName(reBuildController, reBuildService, reBuildServiceImpl, reBuildServiceMock
+				, false, alias, tableNames);
 	}
 
 	/**
@@ -230,12 +211,6 @@ public class CodeGeneratorManager extends CodeGeneratorConfig {
 		return sb.toString();
 	}
 
-	public static void main(String[] args) {
-		CodeGeneratorManager cm = new CodeGeneratorManager();
-		String hcs_base_tet = cm.getDefModelName("hcs_base_tet");
-		System.out.println(hcs_base_tet);
-	}
-
 	/**
 	 * 获取表名切割后的数组
 	 * @param tableName 表名
@@ -261,10 +236,11 @@ public class CodeGeneratorManager extends CodeGeneratorConfig {
 									boolean reBuildServiceImpl,
 									boolean reBuildServiceMock,
 									boolean flag,
+									String alias,
 									String ...tableNames) {
 		for (String tableName : tableNames) {
 			genCodeByTableName(reBuildController,reBuildService,reBuildServiceImpl,reBuildServiceMock
-					,tableName, null, flag);
+					,tableName, alias, flag);
 		}
 	}
 
@@ -312,36 +288,10 @@ public class CodeGeneratorManager extends CodeGeneratorConfig {
 			* 刘春春修改：实体名即为表名驼峰格式
 			* */
 			modelName = tableNameConvertUpperCamel(tableName);
-			upperModelName = StringUtils.toUpperCaseFirstOne(modelName);
-//			modelName = getDefModelName(tableName);
-		}
-		if (reMoveModelAndMapperAndMapperXML) {
-			System.out.println("删除文件：" + PROJECT_PATH + PACKAGE_PATH_MODEL + MODEL_PACKAGE.replace(".", "/") + "/" + upperModelName + ".java");
-			delFile(PROJECT_PATH + PACKAGE_PATH_MODEL + MODEL_PACKAGE.replace(".", "/") + "/" + upperModelName + ".java");
-
-			System.out.println("删除文件：" + PROJECT_PATH + PACKAGE_PATH_MAPPER + MAPPER_PACKAGE.replace(".", "/") + "/" + upperModelName + "Mapper.java");
-			delFile(PROJECT_PATH + PACKAGE_PATH_MAPPER + MAPPER_PACKAGE.replace(".", "/") + "/" + upperModelName + "Mapper.java");
-
-			System.out.println("删除文件：" + PROJECT_PATH + RESOURCES_PATH + "/" + MAPPER_PACKAGE.replace(".", "/") + "/" + upperModelName + "Mapper.xml");
-			delFile(PROJECT_PATH + RESOURCES_PATH + "/" + MAPPER_PACKAGE.replace(".", "/") + "/" + upperModelName + "Mapper.xml");
-		}
-		if(reMoveService) {
-			System.out.println("删除文件：" + PROJECT_PATH + PACKAGE_PATH_SERVICE + upperModelName + "Service.java");
-			delFile(PROJECT_PATH + PACKAGE_PATH_SERVICE + upperModelName + "Service.java");
-		}
-		if(reMoveServiceImpl) {
-			System.out.println("删除文件：" + PROJECT_PATH + PACKAGE_PATH_SERVICE_IMPL + upperModelName + "ServiceImpl.java");
-			delFile(PROJECT_PATH + PACKAGE_PATH_SERVICE_IMPL + upperModelName + "ServiceImpl.java");
-		}
-		if(reMoveServiceMock) {
-			System.out.println("删除文件：" + PROJECT_PATH + PACKAGE_PATH_SERVICE + upperModelName + "ServiceMock.java");
-			delFile(PROJECT_PATH + PACKAGE_PATH_SERVICE + upperModelName + "ServiceMock.java");
-		}
-		if(reMoveController){
-			System.out.println("删除文件："+PROJECT_PATH+PACKAGE_PATH_CONTROLLER+upperModelName+"Controller.java");
-			delFile(PROJECT_PATH+PACKAGE_PATH_CONTROLLER+upperModelName+"Controller.java");
 		}
 
+		System.out.println("删除文件：" + PROJECT_PATH + PROJECT_NAME);
+		delFolder(PROJECT_PATH + PROJECT_NAME);
 	}
 
 	public static boolean delAllFile(String path) {
@@ -419,28 +369,51 @@ public class CodeGeneratorManager extends CodeGeneratorConfig {
 	 * @param context
 	 */
 	private void addMapperPlugin(Context context) {
-		PluginConfiguration equalsHashCodePlugin = new PluginConfiguration();
-		equalsHashCodePlugin.setConfigurationType("org.mybatis.generator.plugins.EqualsHashCodePlugin");
-		context.addPluginConfiguration(equalsHashCodePlugin);
+//		PluginConfiguration equalsHashCodePlugin = new PluginConfiguration();
+//		equalsHashCodePlugin.setConfigurationType("org.mybatis.generator.plugins.EqualsHashCodePlugin");
+//		context.addPluginConfiguration(equalsHashCodePlugin);
+
+		PluginConfiguration lombookPlugin = new PluginConfiguration();
+		lombookPlugin.setConfigurationType("com.codegen.util.LombokPlugin");
+		lombookPlugin.addProperty("hasLombok","true");
+		context.addPluginConfiguration(lombookPlugin);
 
 		PluginConfiguration mapperPlugin = new PluginConfiguration();
 		mapperPlugin.setConfigurationType("com.codegen.util.MapperPlugin");
-		mapperPlugin.addProperty("targetProject",PROJECT_PATH + JAVA_PATH + PACKAGE_PATH_BASE_MAPPER);
-		mapperPlugin.addProperty("targetPackage",MAPPER_INTERFACE_REFERENCE);
-
+		mapperPlugin.addProperty("targetProject",PROJECT_PATH+PACKAGE_PATH);
+		mapperPlugin.addProperty("targetPackage",MAPPER_PACKAGE);
 		context.addPluginConfiguration(mapperPlugin);
 
+		PluginConfiguration renameSqlMapperPlugin = new PluginConfiguration();
+		renameSqlMapperPlugin.setConfigurationType("com.codegen.util.RenameXmlMapperPlugin");
+		renameSqlMapperPlugin.addProperty("searchString","Mapper");
+		renameSqlMapperPlugin.addProperty("replaceString","Dao");
+		context.addPluginConfiguration(renameSqlMapperPlugin);
+
+		PluginConfiguration renameJavaMapperPlugin = new PluginConfiguration();
+		renameJavaMapperPlugin.setConfigurationType("com.codegen.util.RenameJavaMapperPlugin");
+		renameJavaMapperPlugin.addProperty("searchString","Mapper$");
+		renameJavaMapperPlugin.addProperty("replaceString","Dao");
+		context.addPluginConfiguration(renameJavaMapperPlugin);
+
 		// 创建 Service 接口
-		File modelFile = new File(PROJECT_PATH + JAVA_PATH + PACKAGE_PATH_BASE_MAPPER+"/liuchunchun.txt");
+		File modelFile = new File(PROJECT_PATH + PACKAGE_PATH + MODEL_PACKAGE.replace(".", "/"));
 		// 查看父级目录是否存在, 不存在则创建
-		if (!modelFile.getParentFile().exists()) {
-			modelFile.getParentFile().mkdirs();
+		if (!modelFile.exists()) {
+			modelFile.mkdirs();
 		}
 
-		PluginConfiguration pluginConfiguration = new PluginConfiguration();
-		pluginConfiguration.setConfigurationType("com.codegen.util.SerializablePlugin");
-		pluginConfiguration.addProperty("suppressJavaInterface", "false");
-		context.addPluginConfiguration(pluginConfiguration);
+		// 创建 MAPPER 接口
+		File mapperFile = new File(PROJECT_PATH + PACKAGE_PATH_MAPPER);
+		// 查看父级目录是否存在, 不存在则创建
+		if (!mapperFile.exists()) {
+			mapperFile.mkdirs();
+		}
+
+//		PluginConfiguration pluginConfiguration = new PluginConfiguration();
+//		pluginConfiguration.setConfigurationType("com.codegen.util.SerializablePlugin");
+//		pluginConfiguration.addProperty("suppressJavaInterface", "false");
+//		context.addPluginConfiguration(pluginConfiguration);
 	}
 
 	/**
@@ -465,36 +438,24 @@ public class CodeGeneratorManager extends CodeGeneratorConfig {
 		JDBC_DRIVER_CLASS_NAME = prop.getProperty("jdbc.driver.class.name");
 
 		JAVA_PATH = prop.getProperty("java.path");
-		RESOURCES_PATH = prop.getProperty("resources.path");
 		MODEL_PATH = prop.getProperty("model.path");
 		MAPPER_PATH = prop.getProperty("mapper.path");
 		TEMPLATE_FILE_PATH = PROJECT_PATH + prop.getProperty("template.file.path");
 
 		BASE_PACKAGE = prop.getProperty("base.package");
-		MODEL_PACKAGE = prop.getProperty("model.package");
-		MAPPER_PACKAGE = prop.getProperty("mapper.package");
-		BASE_MAPPER_PACKAGE = prop.getProperty("base.mapper.package");
-		SERVICE_PACKAGE = prop.getProperty("service.package");
-		SERVICE_IMPL_PACKAGE = prop.getProperty("service.impl.package");
-		CONTROLLER_PACKAGE = prop.getProperty("controller.package");
+		PROJECT_NAME = prop.getProperty("project.name");
+		PACKAGE_PATH = prop.getProperty("package.path");
+		MODEL_PACKAGE = BASE_PACKAGE + "." + prop.getProperty("model.package.tail");
+		MAPPER_PACKAGE = BASE_PACKAGE + "." + prop.getProperty("mapper.package.tail");
+		XML_MAPPER_PACKAGE = BASE_PACKAGE + "." + prop.getProperty("xml.mapper.package.tail");
+		BASE_MAPPER_PACKAGE = BASE_PACKAGE + "." + prop.getProperty("base.mapper.package.tail");
+		SERVICE_PACKAGE = BASE_PACKAGE + "." + prop.getProperty("service.package.tail");
+		SERVICE_IMPL_PACKAGE = BASE_PACKAGE + "." + prop.getProperty("service.impl.package.tail");
+		CONTROLLER_PACKAGE = BASE_PACKAGE + "." + prop.getProperty("controller.package.tail");
 
 		MAPPER_INTERFACE_REFERENCE = prop.getProperty("mapper.interface.reference");
 		SERVICE_INTERFACE_REFERENCE = prop.getProperty("service.interface.reference");
 		ABSTRACT_SERVICE_CLASS_REFERENCE = prop.getProperty("abstract.service.class.reference");
-
-		String servicePackage = prop.getProperty("package.path.service");
-		String modelPackage = prop.getProperty("package.path.model");
-		String mapperPackage = prop.getProperty("package.path.mapper");
-		String baseMapperPackage = prop.getProperty("package.path.base.mapper");
-		String serviceImplPackage = prop.getProperty("package.path.service.impl");
-		String controllerPackage = prop.getProperty("package.path.controller");
-
-		PACKAGE_PATH_SERVICE = "".equals(servicePackage) ? packageConvertPath(SERVICE_PACKAGE) : servicePackage;
-		PACKAGE_PATH_MODEL = "".equals(modelPackage) ? packageConvertPath(MODEL_PACKAGE) : modelPackage;
-		PACKAGE_PATH_MAPPER = "".equals(mapperPackage) ? packageConvertPath(MAPPER_PACKAGE) : mapperPackage;
-		PACKAGE_PATH_BASE_MAPPER = "".equals(baseMapperPackage) ? packageConvertPath(BASE_MAPPER_PACKAGE) : baseMapperPackage;
-		PACKAGE_PATH_SERVICE_IMPL = "".equals(serviceImplPackage) ? packageConvertPath(SERVICE_IMPL_PACKAGE) : serviceImplPackage;
-		PACKAGE_PATH_CONTROLLER = "".equals(controllerPackage) ? packageConvertPath(CONTROLLER_PACKAGE) : controllerPackage;
 
 		AUTHOR = prop.getProperty("author");
 		String dateFormat = "".equals(prop.getProperty("date-format")) ? "yyyy/MM/dd" : prop.getProperty("date-format");
