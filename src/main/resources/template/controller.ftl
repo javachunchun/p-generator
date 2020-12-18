@@ -8,6 +8,8 @@ import com.resafety.webioc.sys.common.BaseController;
 import com.alibaba.fastjson.JSONObject;
 import com.resafety.webioc.utils.ResultDto;
 import com.resafety.util.RequestUtils;
+import ${servicePackage}.${modelNameUpperCamel}Service;
+import ${modelPackage}.${modelNameUpperCamel};
 
 /**
  * ${modelNameLowerCamel}控制器

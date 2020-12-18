@@ -7,8 +7,8 @@ import com.codegen.service.CodeGeneratorManager;
  * Created by liuchunchun on 2018/10/20.
  */
 public class CodeGeneratorMain {
-	private static final String TABLE = "t_service_effect";
-	public static final String ALIAS = "Liuchunchun";
+	private static final String TABLE = "t_ioc_app_component_layout";
+	public static final String ALIAS = "ComponentLayout";
 	private static final boolean reBuildController = true;
 	private static final boolean reBuildService = true;
 	private static final boolean reBuildServiceImpl = false;
