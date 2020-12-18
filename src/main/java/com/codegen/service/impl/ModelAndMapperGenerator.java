@@ -21,7 +21,7 @@ import java.util.List;
  */
 public class ModelAndMapperGenerator extends CodeGeneratorManager implements CodeGenerator {
 
-	public void genCode(String tableName, String modelName, String sign) {
+	public void genCode(String appAlias, String tableName, String modelName, String sign) {
 
 		Context initConfig = initConfig(tableName, modelName, sign);
 		List<String> warnings = null;
@@ -30,7 +30,7 @@ public class ModelAndMapperGenerator extends CodeGeneratorManager implements Cod
 			Configuration cfg = new Configuration();
 			cfg.addContext(initConfig);
 			cfg.validate();
-			
+
 			MyShellCallback callback = new MyShellCallback(true);
 			warnings = new ArrayList<String>();
 			generator = new MyBatisGenerator(cfg, callback, warnings);
@@ -39,15 +39,15 @@ public class ModelAndMapperGenerator extends CodeGeneratorManager implements Cod
 			e.printStackTrace();
 			throw new RuntimeException("Model 和  Mapper 生成失败!", e);
 		}
-		
+
 		if (generator == null || generator.getGeneratedJavaFiles().isEmpty() || generator.getGeneratedXmlFiles().isEmpty()) {
 			throw new RuntimeException("Model 和  Mapper 生成失败, warnings: " + warnings);
 		}
-		
+
 		if (StringUtils.isNullOrEmpty(modelName)) {
 			modelName = tableNameConvertUpperCamel(tableName);
 		}
-		
+
 		logger.info(modelName, "{}.java 生成成功!");
 		logger.info(modelName, "{}Dao.java 生成成功!");
 		logger.info(modelName, "{}Dao.xml 生成成功!");

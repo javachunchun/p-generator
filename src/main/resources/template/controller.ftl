@@ -12,11 +12,11 @@ import ${servicePackage}.${modelNameUpperCamel}Service;
 import ${modelPackage}.${modelNameUpperCamel};
 
 /**
- * ${modelNameLowerCamel}控制器
+ * ${modelAlias}控制器
  * Created by ${author} on ${date}.
  */
 @RestController
-@RequestMapping("/${controllerMapping}")
+@RequestMapping("/${modelName}")
 public class ${modelNameUpperCamel}Controller extends BaseController {
 
     @Autowired

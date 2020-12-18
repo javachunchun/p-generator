@@ -126,9 +126,10 @@ public class CodeGeneratorManager extends CodeGeneratorConfig {
 									  boolean reBuildServiceImpl,
 									  boolean reBuildServiceMock,
 									  String alias,
+									  String appAlias,
 									  String ...tableNames) {
 		genCodeByTableName(reBuildController, reBuildService, reBuildServiceImpl, reBuildServiceMock
-				, false, alias, tableNames);
+				, false, alias, appAlias, tableNames);
 	}
 
 	/**
@@ -139,8 +140,8 @@ public class CodeGeneratorManager extends CodeGeneratorConfig {
 	 */
 	public void genCodeWithCustomName(boolean reBuildController, boolean reBuildService, boolean reBuildServiceImpl, boolean reBuildServiceMock
 			, boolean reBuildModelAndMapperAndMapperXML,String tableName, String customModelName) {
-		genCodeByTableName(reBuildController,reBuildService,reBuildServiceImpl,reBuildServiceMock
-				,tableName, customModelName, false);
+		genCodeByTableName(reBuildController, reBuildService, reBuildServiceImpl, reBuildServiceMock
+				, tableName, customModelName, "", false);
 	}
 
 	/**
@@ -238,10 +239,11 @@ public class CodeGeneratorManager extends CodeGeneratorConfig {
 									boolean reBuildServiceMock,
 									boolean flag,
 									String alias,
+									String appAlias,
 									String ...tableNames) {
 		for (String tableName : tableNames) {
-			genCodeByTableName(reBuildController,reBuildService,reBuildServiceImpl,reBuildServiceMock
-					,tableName, alias, flag);
+			genCodeByTableName(reBuildController, reBuildService, reBuildServiceImpl, reBuildServiceMock
+					, tableName, alias, appAlias, flag);
 		}
 	}
 
@@ -259,6 +261,7 @@ public class CodeGeneratorManager extends CodeGeneratorConfig {
 									boolean reBuildServiceMock,
 									String tableName,
 									String modelName,
+									String appAlias,
 									boolean flag) {
 		String sign = getSign(tableName);
 		if (flag) {
@@ -267,9 +270,9 @@ public class CodeGeneratorManager extends CodeGeneratorConfig {
 			* */
 			modelName = tableNameConvertUpperCamel(tableName);
 		}
-		new ModelAndMapperGenerator().genCode(tableName, modelName, sign);
-		new ServiceGenerator().genCode(tableName, modelName, sign,reBuildService,reBuildServiceImpl,reBuildServiceMock);
-		new ControllerGenerator().genCode(tableName, modelName, sign,reBuildController);
+		new ModelAndMapperGenerator().genCode(appAlias,tableName, modelName, sign);
+		new ServiceGenerator().genCode(appAlias,tableName, modelName, sign,reBuildService,reBuildServiceImpl,reBuildServiceMock);
+		new ControllerGenerator().genCode(appAlias,tableName, modelName, sign,reBuildController);
 	}
 
 	/**

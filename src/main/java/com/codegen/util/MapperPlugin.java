@@ -174,6 +174,8 @@ public class MapperPlugin extends PluginAdapter {
             IntrospectedColumn introspectedColumn = introspectedTable.getAllColumns().get(i);
             if (i < introspectedTable.getAllColumns().size() - 1) {
                 add.addElement(new TextElement(MyBatis3FormattingUtilities.getEscapedColumnName(introspectedColumn) + ","));
+            } else {
+                add.addElement(new TextElement(MyBatis3FormattingUtilities.getEscapedColumnName(introspectedColumn)));
             }
         }
         add.addElement(new TextElement(")"));
@@ -222,6 +224,7 @@ public class MapperPlugin extends PluginAdapter {
         }
 
         update.addElement(set);
+        update.addElement(new TextElement(" where id=#{id}"));
         parentElement.addElement(update);
 
         //添加deleteById
@@ -383,6 +386,12 @@ public class MapperPlugin extends PluginAdapter {
                 FullyQualifiedJavaType deleteByIdReturnType = new FullyQualifiedJavaType("int");
                 Method deleteByPrimaryKey = buildMethod(mapperInterface, baseModelJavaType, "deleteById", deleteByIdParam, deleteByIdReturnType, null);
 
+                list.addJavaDocLine("//查询列表");
+                selectById.addJavaDocLine("//查询详情");
+                selectByIds.addJavaDocLine("//根据主键查询列表");
+                add.addJavaDocLine("//新增");
+                updateById.addJavaDocLine("//根据主键更新");
+                deleteByPrimaryKey.addJavaDocLine("//根据主键删除");
                 mapperInterface.addMethod(list);
                 mapperInterface.addMethod(selectById);
                 mapperInterface.addMethod(selectByIds);

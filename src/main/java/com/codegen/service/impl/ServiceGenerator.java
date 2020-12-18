@@ -21,20 +21,20 @@ import java.util.Map;
  */
 public class ServiceGenerator extends CodeGeneratorManager implements CodeGenerator {
 
-	public void genCode(String tableName, String modelName, String sign, boolean reBuildService, boolean reBuildServiceImpl, boolean reBuildServiceMock) {
+	public void genCode(String appAlias, String tableName, String modelName, String sign, boolean reBuildService, boolean reBuildServiceImpl, boolean reBuildServiceMock) {
 		Configuration cfg = getFreemarkerConfiguration();
 		/*
-		* 刘春春修改：暂时不用表名作为报名判断
-		* */
+		 * 刘春春修改：暂时不用表名作为报名判断
+		 * */
 //		String customMapping = "/" + sign + "/";
 		String modelNameUpperCamel = StringUtils.isNullOrEmpty(modelName) ? tableNameConvertUpperCamel(tableName) : modelName;
-		
-		Map<String, Object> data = getDataMapInit(modelName, sign, modelNameUpperCamel);
+
+		Map<String, Object> data = getDataMapInit(appAlias, modelName, sign, modelNameUpperCamel);
 		try {
-			if(reBuildService) {
+			if (reBuildService) {
 				// 创建 Service 接口
 				File serviceFile = new File(PROJECT_PATH + PACKAGE_PATH + SERVICE_PACKAGE.replace(".", "/")
-						+ "/"+ modelNameUpperCamel + "Service.java");
+						+ "/" + modelNameUpperCamel + "Service.java");
 				// 查看父级目录是否存在, 不存在则创建
 				if (!serviceFile.getParentFile().exists()) {
 					serviceFile.getParentFile().mkdirs();
@@ -43,7 +43,7 @@ public class ServiceGenerator extends CodeGeneratorManager implements CodeGenera
 				logger.info(modelNameUpperCamel + "Service.java 生成成功!");
 
 			}
-			if(reBuildServiceMock) {
+			if (reBuildServiceMock) {
 				// 创建 ServiceMock 降级实现
 				File serviceMockFile = new File(PROJECT_PATH + JAVA_PATH + PACKAGE_PATH_SERVICE + /*customMapping
 					+*/ modelNameUpperCamel + "ServiceMock.java");
@@ -54,10 +54,10 @@ public class ServiceGenerator extends CodeGeneratorManager implements CodeGenera
 				cfg.getTemplate("service-mock.ftl").process(data, new FileWriter(serviceMockFile));
 				logger.info(modelNameUpperCamel + "ServiceMock.java 生成成功!");
 			}
-			if(reBuildServiceImpl) {
+			if (reBuildServiceImpl) {
 				// 创建 Service 接口的实现类
 				File serviceImplFile = new File(PROJECT_PATH + PACKAGE_PATH + SERVICE_IMPL_PACKAGE.replace(".", "/")
-						+ "/"+modelNameUpperCamel + "ServiceImpl.java");
+						+ "/" + modelNameUpperCamel + "ServiceImpl.java");
 				// 查看父级目录是否存在, 不存在则创建
 				if (!serviceImplFile.getParentFile().exists()) {
 					serviceImplFile.getParentFile().mkdirs();
@@ -72,16 +72,19 @@ public class ServiceGenerator extends CodeGeneratorManager implements CodeGenera
 	
 	/**
 	 * 预置页面所需数据
+	 *
+	 * @param appAlias
 	 * @param modelName 自定义实体类名, 为null则默认将表名下划线转成大驼峰形式
 	 * @param sign 区分字段, 规定如表 gen_test_demo, 则 test 即为区分字段
 	 * @param modelNameUpperCamel 首字为大写的实体类名
 	 * @return
 	 */
-	private Map<String, Object> getDataMapInit(String modelName, String sign, String modelNameUpperCamel) {
+	private Map<String, Object> getDataMapInit(String appAlias, String modelName, String sign, String modelNameUpperCamel) {
 		Map<String, Object> data = new HashMap<>();
 		data.put("date", DATE);
 		data.put("author", AUTHOR);
 		data.put("sign", sign);
+		data.put("modelName", modelName);
 		data.put("modelNameUpperCamel", modelNameUpperCamel);
 		data.put("modelNameLowerCamel", StringUtils.toLowerCaseFirstOne(modelNameUpperCamel));
 //		data.put("basePackage", BASE_PACKAGE);
@@ -93,6 +96,8 @@ public class ServiceGenerator extends CodeGeneratorManager implements CodeGenera
 		MybatisGeneratorContext instance = MybatisGeneratorContext.getInstance();
 		System.out.println("========================================="+instance);
 		IntrospectedTable introspectedTable = instance.getIntrospectedTable();
+		String remarks = introspectedTable.getRemarks();//表注释
+		data.put("modelAlias", StringUtils.isNullOrEmpty(appAlias) ? remarks : appAlias);
 		IntrospectedColumn introspectedColumn = introspectedTable.getPrimaryKeyColumns().get(0);
 		String shortName = introspectedColumn.getFullyQualifiedJavaType().getShortName();
 		String javaProperty = introspectedColumn.getJavaProperty();
@@ -135,7 +140,7 @@ public class ServiceGenerator extends CodeGeneratorManager implements CodeGenera
 	}
 
 	@Override
-	public void genCode(String tableName, String modelName, String sign) {
+	public void genCode(String appAlias, String tableName, String modelName, String sign) {
 
 	}
 }

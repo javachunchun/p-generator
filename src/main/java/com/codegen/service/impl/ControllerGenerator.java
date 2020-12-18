@@ -21,19 +21,19 @@ import java.util.Map;
  */
 public class ControllerGenerator extends CodeGeneratorManager implements CodeGenerator {
 
-	public void genCode(String tableName, String modelName, String sign, boolean reBuildController) {
+	public void genCode(String appAlias, String tableName, String modelName, String sign, boolean reBuildController) {
 		Configuration cfg = getFreemarkerConfiguration();
 		/*
-		* 刘春春修改：暂时不用表名做路径判断
-		* */
+		 * 刘春春修改：暂时不用表名做路径判断
+		 * */
 //		String customMapping = "/" + sign + "/";
 		String modelNameUpperCamel = StringUtils.isNullOrEmpty(modelName) ? tableNameConvertUpperCamel(tableName) : modelName;
-		
-		Map<String, Object> data = getDataMapInit(tableName, modelName, sign, modelNameUpperCamel); 
+
+		Map<String, Object> data = getDataMapInit(appAlias, tableName, modelName, sign, modelNameUpperCamel);
 		try {
-			if(reBuildController) {
+			if (reBuildController) {
 				File controllerFile = new File(PROJECT_PATH + PACKAGE_PATH + CONTROLLER_PACKAGE.replace(".", "/") +
-						"/"+modelNameUpperCamel + "Controller.java");
+						"/" + modelNameUpperCamel + "Controller.java");
 				if (!controllerFile.getParentFile().exists()) {
 					controllerFile.getParentFile().mkdirs();
 				}
@@ -47,13 +47,15 @@ public class ControllerGenerator extends CodeGeneratorManager implements CodeGen
 	
 	/**
 	 * 预置页面所需数据
+	 *
+	 * @param appAlias
 	 * @param tableName 表名
 	 * @param modelName 自定义实体类名, 为null则默认将表名下划线转成大驼峰形式
 	 * @param sign 区分字段, 规定如表 gen_test_demo, 则 test 即为区分字段
 	 * @param modelNameUpperCamel 首字为大写的实体类名
 	 * @return
 	 */
-	private Map<String, Object> getDataMapInit(String tableName, String modelName, String sign, String modelNameUpperCamel) {
+	private Map<String, Object> getDataMapInit(String appAlias, String tableName, String modelName, String sign, String modelNameUpperCamel) {
 		Map<String, Object> data = new HashMap<String, Object>();
 		data.put("date", DATE);
         data.put("author", AUTHOR);
@@ -62,6 +64,7 @@ public class ControllerGenerator extends CodeGeneratorManager implements CodeGen
 		String leafRequest = split[split.length - 1];
 		String baseRequestMapping = "/pf/"+leafRequest+"/"+StringUtils.toLowerCaseFirstOne(modelNameUpperCamel)+"/";
 		data.put("baseRequestMapping", baseRequestMapping);
+		data.put("modelName", modelName);
         data.put("modelNameUpperCamel", modelNameUpperCamel);
         data.put("modelNameLowerCamel", CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, modelNameUpperCamel));
 //        data.put("basePackage", BASE_PACKAGE);
@@ -74,6 +77,8 @@ public class ControllerGenerator extends CodeGeneratorManager implements CodeGen
 //		获取全局变量
 		MybatisGeneratorContext instance = MybatisGeneratorContext.getInstance();
 		IntrospectedTable introspectedTable = instance.getIntrospectedTable();
+		String remarks = introspectedTable.getRemarks();//表注释
+		data.put("modelAlias", StringUtils.isNullOrEmpty(appAlias) ? remarks : appAlias);
 		IntrospectedColumn introspectedColumn = introspectedTable.getPrimaryKeyColumns().get(0);
 		String shortName = introspectedColumn.getFullyQualifiedJavaType().getShortName();
 		String javaProperty = introspectedColumn.getJavaProperty();
@@ -86,6 +91,7 @@ public class ControllerGenerator extends CodeGeneratorManager implements CodeGen
 			}
 		}
 
+		data.put("nonPrimaryKeyColumns", nonPrimaryKeyColumns);
 		data.put("primaryKeyType", shortName);
 		String[] split1 = StringUtils.camelCase2UnderScoreCase(modelNameUpperCamel).split("_");
 		String leafName = split1[split1.length - 1];
@@ -100,7 +106,6 @@ public class ControllerGenerator extends CodeGeneratorManager implements CodeGen
 	}
 
 	@Override
-	public void genCode(String tableName, String modelName, String sign) {
-
+	public void genCode(String appAlias, String tableName, String modelName, String sign) {
 	}
 }

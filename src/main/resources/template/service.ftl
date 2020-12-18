@@ -14,7 +14,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 /**
- * ${modelNameLowerCamel}服务类
+ * ${modelAlias}服务类
  * Created by ${author} on ${date}.
  */
 @Service
