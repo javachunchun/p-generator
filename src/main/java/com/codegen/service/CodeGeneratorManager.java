@@ -53,7 +53,7 @@ public class CodeGeneratorManager extends CodeGeneratorConfig {
 	 */
 	public Context initMybatisGeneratorContext(String sign) {
 		Context context = new Context(ModelType.FLAT);
-		context.setId("MySql");
+		context.setId("Mysql");
 		context.setTargetRuntime("MyBatis3Simple");
 		context.addProperty(PropertyRegistry.CONTEXT_BEGINNING_DELIMITER, "`");
         context.addProperty(PropertyRegistry.CONTEXT_ENDING_DELIMITER, "`");

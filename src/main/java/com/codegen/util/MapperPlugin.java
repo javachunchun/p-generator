@@ -230,7 +230,7 @@ public class MapperPlugin extends PluginAdapter {
         //添加deleteById
         XmlElement deleteById = new XmlElement("delete");
         deleteById.addAttribute(new Attribute("id", "deleteById"));
-        deleteById.addAttribute(new Attribute("parameterType", "int"));
+        deleteById.addAttribute(new Attribute("parameterType", "String"));
         deleteById.addElement(new TextElement("delete from "+ introspectedTable.getFullyQualifiedTableNameAtRuntime()+"" +
                 " where id= #{id}"));
 
