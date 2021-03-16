@@ -7,10 +7,7 @@ import com.codegen.util.MybatisGeneratorContext;
 import com.codegen.util.StringUtils;
 import org.mybatis.generator.api.IntrospectedTable;
 import org.mybatis.generator.api.MyBatisGenerator;
-import org.mybatis.generator.config.Configuration;
-import org.mybatis.generator.config.Context;
-import org.mybatis.generator.config.GeneratedKey;
-import org.mybatis.generator.config.TableConfiguration;
+import org.mybatis.generator.config.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,7 +67,13 @@ public class ModelAndMapperGenerator extends CodeGeneratorManager implements Cod
 			tableConfiguration.setInsertStatementEnabled(false);
 	        tableConfiguration.setTableName(tableName);
 	        tableConfiguration.setDomainObjectName(modelName);
+			ColumnRenamingRule renamingRule = new ColumnRenamingRule();
+			renamingRule.setSearchString("F_");
+			renamingRule.setReplaceString("");
+			tableConfiguration.setColumnRenamingRule(renamingRule);
+
 	        tableConfiguration.setGeneratedKey(new GeneratedKey("id", "Mysql", true, null));
+
 	        context.addTableConfiguration(tableConfiguration);
 		} catch (Exception e) {
 			throw new RuntimeException("ModelAndMapperGenerator 初始化环境异常!", e);
