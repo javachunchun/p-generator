@@ -3,13 +3,15 @@ package ${serviceImplPackage};
 <#--import com.alibaba.dubbo.config.annotation.Service;-->
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import javax.annotation.Resource;
-import com.bjsdzk.common.core.AbstractService;
+<#--import org.slf4j.Logger;-->
+<#--import org.slf4j.LoggerFactory;-->
+<#--import javax.annotation.Resource;-->
+<#--import com.bjsdzk.common.core.AbstractService;-->
 import ${servicePackage}.${modelNameUpperCamel}Service;
+<#--import ${mapperPackage}.${modelNameUpperCamel}Mapper;-->
 import ${mapperPackage}.${modelNameUpperCamel}Mapper;
 import ${modelPackage}.${modelNameUpperCamel};
+import lombok.extern.slf4j.Slf4j;
 <#--import com.hoze.pf.common.vo.PaginationVO;
 import com.hoze.pf.common.vo.BaseRequestVO;
 import com.github.pagehelper.PageHelper;
@@ -20,17 +22,21 @@ import com.hoze.pf.common.utils.StringUtil;
 import java.util.List;-->
 
 /**
- * ${modelNameLowerCamel}服务实现类
- * Created by ${author} on ${date}.
- */
+* @Author: ${author}
+* @Company: 北京睿呈时代信息科技有限公司
+* @Date: ${date}
+* @Version: 1.0
+* @Description: ${modelAlias}服务实现类
+*/
 @Service
+@Slf4j
 @Transactional
-public class ${modelNameUpperCamel}ServiceImpl extends AbstractService<${modelNameUpperCamel}> implements ${modelNameUpperCamel}Service{
+public class ${modelNameUpperCamel}ServiceImpl extends ServiceImpl<${modelNameUpperCamel}Mapper, ${modelNameUpperCamel}> implements ${modelNameUpperCamel}Service {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(${modelNameUpperCamel}ServiceImpl.class);
+    <#--private static final Logger LOGGER = LoggerFactory.getLogger(${modelNameUpperCamel}ServiceImpl.class);-->
 
-    @Resource
-    private ${modelNameUpperCamel}Mapper ${modelNameLowerCamel}Mapper;
+    <#--@Resource-->
+    <#--private ${modelNameUpperCamel}Mapper ${modelNameLowerCamel}Mapper;-->
 
     <#--@Override
     public int insert(${modelNameUpperCamel} ${modelNameLowerCamel}) throws CommonException {

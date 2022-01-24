@@ -23,10 +23,6 @@ public class ControllerGenerator extends CodeGeneratorManager implements CodeGen
 
 	public void genCode(String appAlias, String tableName, String modelName, String sign, boolean reBuildController) {
 		Configuration cfg = getFreemarkerConfiguration();
-		/*
-		 * 刘春春修改：暂时不用表名做路径判断
-		 * */
-//		String customMapping = "/" + sign + "/";
 		String modelNameUpperCamel = StringUtils.isNullOrEmpty(modelName) ? tableNameConvertUpperCamel(tableName) : modelName;
 
 		Map<String, Object> data = getDataMapInit(appAlias, tableName, modelName, sign, modelNameUpperCamel);
@@ -55,19 +51,20 @@ public class ControllerGenerator extends CodeGeneratorManager implements CodeGen
 	 * @param modelNameUpperCamel 首字为大写的实体类名
 	 * @return
 	 */
-	private Map<String, Object> getDataMapInit(String appAlias, String tableName, String modelName, String sign, String modelNameUpperCamel) {
+	private Map<String, Object> getDataMapInit(String appAlias,
+											   String tableName,
+											   String modelName,
+											   String sign,
+											   String modelNameUpperCamel) {
 		Map<String, Object> data = new HashMap<String, Object>();
 		data.put("date", DATE);
         data.put("author", AUTHOR);
         data.put("sign", sign);
 		String[] split = CONTROLLER_PACKAGE.split("\\.");
 		String leafRequest = split[split.length - 1];
-		String baseRequestMapping = "/pf/"+leafRequest+"/"+StringUtils.toLowerCaseFirstOne(modelNameUpperCamel)+"/";
-		data.put("baseRequestMapping", baseRequestMapping);
 		data.put("modelName", modelName);
         data.put("modelNameUpperCamel", modelNameUpperCamel);
         data.put("modelNameLowerCamel", CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, modelNameUpperCamel));
-//        data.put("basePackage", BASE_PACKAGE);
         data.put("controllerPackage", CONTROLLER_PACKAGE);
 		data.put("controllerMapping", tableName.replace("_", "-"));
 		data.put("modelPackage", MODEL_PACKAGE);

@@ -388,17 +388,17 @@ public class CodeGeneratorManager extends CodeGeneratorConfig {
 		mapperPlugin.addProperty("targetPackage",MAPPER_PACKAGE);
 		context.addPluginConfiguration(mapperPlugin);
 
-		PluginConfiguration renameSqlMapperPlugin = new PluginConfiguration();
-		renameSqlMapperPlugin.setConfigurationType("com.codegen.util.RenameXmlMapperPlugin");
-		renameSqlMapperPlugin.addProperty("searchString","Mapper");
-		renameSqlMapperPlugin.addProperty("replaceString","Dao");
-		context.addPluginConfiguration(renameSqlMapperPlugin);
+//		PluginConfiguration renameSqlMapperPlugin = new PluginConfiguration();
+//		renameSqlMapperPlugin.setConfigurationType("com.codegen.util.RenameXmlMapperPlugin");
+//		renameSqlMapperPlugin.addProperty("searchString","Mapper");
+//		renameSqlMapperPlugin.addProperty("replaceString","Dao");
+//		context.addPluginConfiguration(renameSqlMapperPlugin);
 
-		PluginConfiguration renameJavaMapperPlugin = new PluginConfiguration();
-		renameJavaMapperPlugin.setConfigurationType("com.codegen.util.RenameJavaMapperPlugin");
-		renameJavaMapperPlugin.addProperty("searchString","Mapper$");
-		renameJavaMapperPlugin.addProperty("replaceString","Dao");
-		context.addPluginConfiguration(renameJavaMapperPlugin);
+//		PluginConfiguration renameJavaMapperPlugin = new PluginConfiguration();
+//		renameJavaMapperPlugin.setConfigurationType("com.codegen.util.RenameJavaMapperPlugin");
+//		renameJavaMapperPlugin.addProperty("searchString","Mapper$");
+//		renameJavaMapperPlugin.addProperty("replaceString","Dao");
+//		context.addPluginConfiguration(renameJavaMapperPlugin);
 
 		// 创建 Service 接口
 		File modelFile = new File(PROJECT_PATH + PACKAGE_PATH + MODEL_PACKAGE.replace(".", "/"));
@@ -449,13 +449,13 @@ public class CodeGeneratorManager extends CodeGeneratorConfig {
 		BASE_PACKAGE = prop.getProperty("base.package");
 		PROJECT_NAME = prop.getProperty("project.name");
 		PACKAGE_PATH = prop.getProperty("package.path");
-		MODEL_PACKAGE = BASE_PACKAGE + "." + CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, CodeGeneratorMain.ALIAS) + "." + prop.getProperty("model.package.tail");
-		MAPPER_PACKAGE = BASE_PACKAGE + "."+ CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, CodeGeneratorMain.ALIAS) + "." + prop.getProperty("mapper.package.tail");
-		XML_MAPPER_PACKAGE = BASE_PACKAGE + "."+ CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, CodeGeneratorMain.ALIAS) + "." + prop.getProperty("xml.mapper.package.tail");
-		BASE_MAPPER_PACKAGE = BASE_PACKAGE + "."+ CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, CodeGeneratorMain.ALIAS) + "." + prop.getProperty("base.mapper.package.tail");
-		SERVICE_PACKAGE = BASE_PACKAGE + "."+ CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, CodeGeneratorMain.ALIAS) + "." + prop.getProperty("service.package.tail");
-		SERVICE_IMPL_PACKAGE = BASE_PACKAGE + "."+ CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, CodeGeneratorMain.ALIAS) + "." + prop.getProperty("service.impl.package.tail");
-		CONTROLLER_PACKAGE = BASE_PACKAGE + "."+ CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, CodeGeneratorMain.ALIAS) + "." + prop.getProperty("controller.package.tail");
+		MODEL_PACKAGE = BASE_PACKAGE +  "." + prop.getProperty("model.package.tail");
+		MAPPER_PACKAGE = BASE_PACKAGE + "." + prop.getProperty("mapper.package.tail");
+		XML_MAPPER_PACKAGE = BASE_PACKAGE + "."+ prop.getProperty("xml.mapper.package.tail");
+		BASE_MAPPER_PACKAGE = BASE_PACKAGE + "." + prop.getProperty("base.mapper.package.tail");
+		SERVICE_PACKAGE = BASE_PACKAGE + "." + prop.getProperty("service.package.tail");
+		SERVICE_IMPL_PACKAGE = BASE_PACKAGE + "." + prop.getProperty("service.impl.package.tail");
+		CONTROLLER_PACKAGE = BASE_PACKAGE + "." + prop.getProperty("controller.package.tail");
 
 		MAPPER_INTERFACE_REFERENCE = prop.getProperty("mapper.interface.reference");
 		SERVICE_INTERFACE_REFERENCE = prop.getProperty("service.interface.reference");

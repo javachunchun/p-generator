@@ -63,8 +63,8 @@ public class CodeGeneratorConfig {
 	protected static String ABSTRACT_SERVICE_CLASS_REFERENCE;
 	
 	// 模板注释中 @author
-	protected static String AUTHOR;
+	public static String AUTHOR;
 	// 模板注释中 @date
-	protected static String DATE;
+	public static String DATE;
 	
 }

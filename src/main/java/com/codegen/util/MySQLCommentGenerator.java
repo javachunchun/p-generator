@@ -1,5 +1,6 @@
 package com.codegen.util;
 
+import com.codegen.service.CodeGeneratorConfig;
 import org.mybatis.generator.api.IntrospectedColumn;
 import org.mybatis.generator.api.IntrospectedTable;
 import org.mybatis.generator.api.dom.OutputUtilities;
@@ -39,7 +40,7 @@ public class MySQLCommentGenerator extends MyCommentGenerator {
      */
     @Override
     public void addModelClassComment(TopLevelClass topLevelClass, IntrospectedTable introspectedTable) {
-        String author = properties.getProperty("author");
+        String author = CodeGeneratorConfig.AUTHOR;
         String dateFormat = properties.getProperty("dateFormat", "yyyy-MM-dd");
         SimpleDateFormat dateFormatter = new SimpleDateFormat(dateFormat);
 
@@ -48,8 +49,12 @@ public class MySQLCommentGenerator extends MyCommentGenerator {
 
         topLevelClass.addJavaDocLine("/**");
         topLevelClass.addJavaDocLine(" * @Author：" + author);
-        topLevelClass.addJavaDocLine(" * @Date：" + dateFormatter.format(new Date()));
-        topLevelClass.addJavaDocLine(" * @Description：" + remarks);
+        topLevelClass.addJavaDocLine(" * @Company: 北京睿呈时代信息科技有限公司");
+        topLevelClass.addJavaDocLine(" * @Date：" + CodeGeneratorConfig.DATE);
+        topLevelClass.addJavaDocLine(" * @Version: 1.0");
+        topLevelClass.addJavaDocLine(" * @Description: " + (remarks == null ? "" : remarks));
+
+//        topLevelClass.addJavaDocLine(" * @Description：" + remarks);
         topLevelClass.addJavaDocLine(" */");
     }
 
@@ -65,6 +70,9 @@ public class MySQLCommentGenerator extends MyCommentGenerator {
         String remarks = introspectedColumn.getRemarks();
         if (!StringUtils.isNullOrEmpty(remarks)) {
             field.addJavaDocLine("//" + remarks);
+            if (introspectedColumn.isIdentity()) {
+                field.addAnnotation("@TableId(value = \"id\", type = IdType.INPUT)");
+            }
         }
     }
 }

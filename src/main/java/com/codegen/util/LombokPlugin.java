@@ -24,9 +24,13 @@ public class LombokPlugin extends PluginAdapter {
     @Override
     public boolean modelBaseRecordClassGenerated(TopLevelClass topLevelClass, IntrospectedTable introspectedTable) {
         //添加domain的import
-//        topLevelClass.addImportedType("lombok.Data");
-//        //添加domain的注解
-//        topLevelClass.addAnnotation("@Data");
+        topLevelClass.addImportedType("lombok.Data");
+
+        //添加domain的import
+        topLevelClass.addImportedType("com.baomidou.mybatisplus.annotation.IdType");
+        topLevelClass.addImportedType("com.baomidou.mybatisplus.annotation.TableId");
+        //添加domain的注解
+        topLevelClass.addAnnotation("@Data");
 
         //添加domain的注释
 //        topLevelClass.addJavaDocLine("/**");
@@ -48,13 +52,13 @@ public class LombokPlugin extends PluginAdapter {
     @Override
     public boolean modelSetterMethodGenerated(Method method, TopLevelClass topLevelClass, IntrospectedColumn introspectedColumn, IntrospectedTable introspectedTable, ModelClassType modelClassType) {
         //不生成getter
-        return true;
+        return false;
     }
 
     @Override
     public boolean modelGetterMethodGenerated(Method method, TopLevelClass topLevelClass, IntrospectedColumn introspectedColumn, IntrospectedTable introspectedTable, ModelClassType modelClassType) {
         //不生成setter
-        return true;
+        return false;
     }
 
     private String date2Str(Date date) {
