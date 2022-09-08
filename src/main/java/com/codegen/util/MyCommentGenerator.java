@@ -1,8 +1,10 @@
 package com.codegen.util;
 
+import com.codegen.service.CodeGeneratorManager;
 import org.mybatis.generator.api.IntrospectedColumn;
 import org.mybatis.generator.api.IntrospectedTable;
 import org.mybatis.generator.api.dom.java.*;
+import org.mybatis.generator.api.dom.xml.Attribute;
 import org.mybatis.generator.api.dom.xml.XmlElement;
 import org.mybatis.generator.internal.DefaultCommentGenerator;
 import org.mybatis.generator.internal.util.StringUtility;
@@ -206,6 +208,23 @@ public class MyCommentGenerator extends DefaultCommentGenerator {
 
     @Override
     public void addRootComment(XmlElement rootElement) {
+        super.addRootComment(rootElement);
+        Object replaceNamespace = CodeGeneratorManager.MAPPER_PACKAGE;
+        if(null==replaceNamespace||replaceNamespace.toString().equals("false"))return;
+        List<Attribute> lists =  rootElement.getAttributes();
+        int delIndex = -1;String orginNameSpace="";
+        for(int i = 0;i<lists.size();i++){
+            if(lists.get(i).getName().equals("namespace")){
+                orginNameSpace = lists.get(i).getValue();
+                //if(orginNameSpace.endsWith("Ext"))break;
+                delIndex = i;
+                break;
+            }
+        }
+        if(delIndex!=-1){
+            lists.remove(delIndex);
+            rootElement.getAttributes().add(new Attribute("namespace", orginNameSpace.replace("mapping.", "")));
+        }
     }
 
     @Override

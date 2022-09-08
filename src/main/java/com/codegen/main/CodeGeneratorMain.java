@@ -7,10 +7,10 @@ import com.codegen.service.CodeGeneratorManager;
  * Created by liuchunchun on 2018/10/20.
  */
 public class CodeGeneratorMain {
-	private static final String TABLE = "view_type_table_define";
-	public static final String ALIAS = "Field";
-	public static final String APP_NAME = "11111";
-	private static final boolean reBuildController = true;
+	private static final String TABLE = "device";
+	public static final String ALIAS = "Device";
+	public static final String APP_NAME = "设备TVM信息";
+	private static final boolean reBuildController = false;
 	private static final boolean reBuildService = true;
 	private static final boolean reBuildServiceImpl = true;
 	private static final boolean reBuildServiceMock = false;

@@ -36,7 +36,7 @@ public class CodeGeneratorConfig {
 	// 项目 Model 所在包
 	protected static String MODEL_PACKAGE;
 	// 项目 Mapper 所在包
-	protected static String MAPPER_PACKAGE;
+	public static String MAPPER_PACKAGE;
 	//  项目Mapper XML所在包
     protected static String XML_MAPPER_PACKAGE;
 	//增强 Mapper所在包

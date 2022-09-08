@@ -49,7 +49,7 @@ public class MySQLCommentGenerator extends MyCommentGenerator {
 
         topLevelClass.addJavaDocLine("/**");
         topLevelClass.addJavaDocLine(" * @Author：" + author);
-        topLevelClass.addJavaDocLine(" * @Company: 北京睿呈时代信息科技有限公司");
+        topLevelClass.addJavaDocLine(" * @Company: 北京万相融通科技股份有限公司");
         topLevelClass.addJavaDocLine(" * @Date：" + CodeGeneratorConfig.DATE);
         topLevelClass.addJavaDocLine(" * @Version: 1.0");
         topLevelClass.addJavaDocLine(" * @Description: " + (remarks == null ? "" : remarks));

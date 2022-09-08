@@ -16,7 +16,7 @@ import ${modelPackage}.${modelNameUpperCamel};
 
 /**
 * @Author: ${author}
-* @Company: 北京睿呈时代信息科技有限公司
+* @Company: 北京万相融通科技股份有限公司
 * @Date: ${date}
 * @Version: 1.0
 * @Description: ${modelAlias}服务类

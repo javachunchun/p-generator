@@ -1,6 +1,7 @@
 package ${serviceImplPackage};
 
 <#--import com.alibaba.dubbo.config.annotation.Service;-->
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 <#--import org.slf4j.Logger;-->
@@ -23,14 +24,14 @@ import java.util.List;-->
 
 /**
 * @Author: ${author}
-* @Company: 北京睿呈时代信息科技有限公司
+* @Company: 北京万相融通科技股份有限公司
 * @Date: ${date}
 * @Version: 1.0
 * @Description: ${modelAlias}服务实现类
 */
 @Service
 @Slf4j
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 public class ${modelNameUpperCamel}ServiceImpl extends ServiceImpl<${modelNameUpperCamel}Mapper, ${modelNameUpperCamel}> implements ${modelNameUpperCamel}Service {
 
     <#--private static final Logger LOGGER = LoggerFactory.getLogger(${modelNameUpperCamel}ServiceImpl.class);-->

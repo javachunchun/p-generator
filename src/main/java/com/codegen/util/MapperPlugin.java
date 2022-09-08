@@ -300,7 +300,7 @@ public class MapperPlugin extends PluginAdapter {
                 mapperInterface.setVisibility(JavaVisibility.PUBLIC);
                 mapperInterface.addJavaDocLine("/**");
                 mapperInterface.addJavaDocLine(" * @Author：" + CodeGeneratorConfig.AUTHOR);
-                mapperInterface.addJavaDocLine(" * @Company: 北京睿呈时代信息科技有限公司");
+                mapperInterface.addJavaDocLine(" * @Company: 北京万相融通科技股份有限公司");
                 mapperInterface.addJavaDocLine(" * @Date：" + CodeGeneratorConfig.DATE);
                 mapperInterface.addJavaDocLine(" * @Version: 1.0");
                 mapperInterface.addJavaDocLine(" * @Description: " + shortName + "数据接口");
