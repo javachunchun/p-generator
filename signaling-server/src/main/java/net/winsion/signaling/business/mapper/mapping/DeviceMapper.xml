@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.winsion.signaling.business.mapper.DeviceMapper">
+  <resultMap id="BaseResultMap" type="net.winsion.signaling.business.entity.Device">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="ctime" jdbcType="TIMESTAMP" property="ctime" />
+    <result column="utime" jdbcType="TIMESTAMP" property="utime" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="salt" jdbcType="VARCHAR" property="salt" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="online" jdbcType="INTEGER" property="online" />
+    <result column="del" jdbcType="INTEGER" property="del" />
+  </resultMap>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, ctime, utime, password, salt, status, online, del
+    from device
+  </select>
+</mapper>
